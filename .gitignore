@@ -23,8 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 
-# Author is licensed from Klim and must not be redistributed
-src/site/fonts/
 .env
-public/author.css
-public/fonts/
