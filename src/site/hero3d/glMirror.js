@@ -1,16 +1,12 @@
-/*
- * troika needs real font FILES, and Author is licensed from Klim — its files
- * are not in this repo. Point these at your own licensed copies to render the
- * landing in Author; unset, troika falls back to its bundled default and the
- * layout is unchanged.
- */
+/* troika needs font FILES rather than CSS, so it reads them straight out of
+   public/ — same Author faces the DOM side uses. */
 const FACES = {
-  200: import.meta.env.VITE_AUTHOR_EXTRALIGHT,
-  300: import.meta.env.VITE_AUTHOR_EXTRALIGHT,
-  400: import.meta.env.VITE_AUTHOR_REGULAR,
-  500: import.meta.env.VITE_AUTHOR_MEDIUM,
-  600: import.meta.env.VITE_AUTHOR_SEMIBOLD,
-  700: import.meta.env.VITE_AUTHOR_SEMIBOLD,
+  200: '/fonts/Author-Extralight.otf',
+  300: '/fonts/Author-Extralight.otf',
+  400: '/fonts/Author-Regular.otf',
+  500: '/fonts/Author-Medium.otf',
+  600: '/fonts/Author-Semibold.otf',
+  700: '/fonts/Author-Semibold.otf',
 }
 
 /*

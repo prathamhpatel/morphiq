@@ -1,8 +1,11 @@
 /*
  * Author by Satya Rajpurohit (Indian Type Foundry), via Fontshare — free for
- * personal and commercial use. The faces are served from public/author.css,
- * wired up in main.jsx; the stack below is the fallback.
+ * personal and commercial use. Files live in public/fonts/.
  */
+@font-face { font-family: 'Author'; src: url('/fonts/Author-Extralight.otf') format('opentype'); font-weight: 200; font-display: swap; }
+@font-face { font-family: 'Author'; src: url('/fonts/Author-Regular.otf')    format('opentype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Author'; src: url('/fonts/Author-Medium.otf')     format('opentype'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Author'; src: url('/fonts/Author-Semibold.otf')   format('opentype'); font-weight: 600; font-display: swap; }
 
 :root {
   --morph-font: 'Author', 'Product Sans', 'Inter', -apple-system,
