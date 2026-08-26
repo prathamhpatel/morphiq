@@ -21,8 +21,15 @@ npx shadcn@latest add @morph/ascii-field
 The source lands in your codebase — yours to read, edit and own. No runtime
 dependency on Morphiq.
 
-> **Status:** the registry is being hosted; until it is live, copy a component
-> from `src/components/` directly. Everything below already works.
+First, point the `@morph` namespace at the registry in your `components.json`:
+
+```json
+{
+  "registries": {
+    "@morph": "https://morphiq.prathampatel.design/r/{name}.json"
+  }
+}
+```
 
 ## Usage
 
