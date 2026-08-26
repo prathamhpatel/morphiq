@@ -1,0 +1,88 @@
+.sxd {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #07080b;
+  color: #fff;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.sxd__lead,
+.sxd__tail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 70svh;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.sxd__eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.sxd__lead h2 {
+  font-size: clamp(28px, 4.4vw, 56px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.sxd__note,
+.sxd__tail p {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- slots inside the pinned stage --- */
+
+.sxd__caption {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: clamp(30px, 6.4vw, 76px);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.5);
+}
+
+.sxd__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  translate: -50% 0;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.sxd__reveal {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(48px, 8svh, 96px);
+  translate: -50% 0;
+  width: min(560px, calc(100% - 48px));
+  text-align: center;
+}
+
+.sxd__reveal h3 {
+  font-size: clamp(24px, 3.2vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+
+.sxd__reveal p {
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}

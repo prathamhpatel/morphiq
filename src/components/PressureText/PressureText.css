@@ -1,0 +1,47 @@
+/* PressureText — JS writes --pt-f (pressure) and --pt-sx (its share of the
+   word's width) per letter. Everything visual is derived here. */
+
+.pressure-text {
+  --pt-weight: 200;
+  --pt-bold: 0.075; /* stroke, in em, at full pressure */
+
+  display: inline;
+  white-space: nowrap;
+  font-weight: var(--pt-weight);
+}
+
+.pressure-text__char {
+  --pt-f: 0;
+  --pt-sx: 1;
+  --pt-w: auto;
+
+  position: relative;
+  display: inline-block;
+  line-height: inherit;
+  vertical-align: baseline;
+}
+
+/* Released while measuring, so natural widths can be read back. */
+.pressure-text.is-live .pressure-text__char {
+  width: calc(var(--pt-w) * var(--pt-sx));
+}
+
+.pressure-text__glyph {
+  display: block;
+  transform: scaleX(var(--pt-sx));
+  transform-origin: 0 50%;
+  white-space: pre;
+
+  /* Growing the outline is what makes the weight MORPH rather than
+     cross-dissolve between two cuts. Divided by the stretch so a widened
+     letter does not also gain a heavier stem. */
+  -webkit-text-stroke-color: currentColor;
+  -webkit-text-stroke-width: calc(
+    var(--pt-f) * var(--pt-bold) * 1em / var(--pt-sx)
+  );
+  paint-order: stroke fill;
+}
+
+.pressure-text__char.is-space .pressure-text__glyph {
+  -webkit-text-stroke-width: 0;
+}

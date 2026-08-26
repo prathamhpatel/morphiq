@@ -1,0 +1,14 @@
+/*
+ * Author is a commercial typeface from Klim Type Foundry. Its licence does
+ * not permit redistributing the font files, so they are NOT in this repo.
+ *
+ * To run this with Author, point VITE_AUTHOR_FONT_CSS at the webfont CSS
+ * URL from your Klim account (see .env.example). main.jsx injects it at
+ * runtime. Without it, everything falls back to the stack below and the
+ * layout still holds — only the typeface differs.
+ */
+
+:root {
+  --morph-font: 'Author', 'Product Sans', 'Inter', -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}

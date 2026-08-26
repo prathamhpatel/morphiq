@@ -1,0 +1,76 @@
+.glass-shader {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #05060a;
+  cursor: crosshair;
+}
+
+.glass-shader canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none;
+}
+
+/* ---- control panel ---- */
+.glass-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 268px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  background: rgba(16, 18, 22, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  user-select: none;
+  cursor: auto;
+  z-index: 10001;
+}
+
+.glass-panel__title {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.glass-panel__group {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 4px;
+}
+
+.glass-panel__row {
+  display: grid;
+  grid-template-columns: 74px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.glass-panel__row > span {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.glass-panel__row > b {
+  font-weight: 500;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: right;
+  min-width: 36px;
+}
+
+.glass-panel__row input[type="range"] {
+  width: 100%;
+  accent-color: #ffffff;
+  cursor: pointer;
+}

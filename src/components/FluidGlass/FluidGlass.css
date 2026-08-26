@@ -1,0 +1,69 @@
+.fluid-glass {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #0b0d16;
+  cursor: crosshair;
+}
+
+.fluid-glass canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none;
+}
+
+/* ---- Test control panel ---- */
+.lens-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 260px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: rgba(16, 18, 22, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  user-select: none;
+  cursor: auto;
+  z-index: 10001;
+}
+
+.lens-panel__title {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.lens-panel__row {
+  display: grid;
+  grid-template-columns: 66px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.lens-panel__row > span {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.lens-panel__row > b {
+  font-weight: 500;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: right;
+  min-width: 34px;
+}
+
+.lens-panel__row input[type="range"] {
+  width: 100%;
+  accent-color: #ffffff;
+  cursor: pointer;
+}

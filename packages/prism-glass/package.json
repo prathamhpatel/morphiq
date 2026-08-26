@@ -1,0 +1,31 @@
+{
+  "name": "@morphiq/prism-glass",
+  "version": "0.1.0",
+  "description": "Programmable liquid-glass refraction for React — real spectral dispersion, frost and directional rim light, on WebGL.",
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/prism-glass.cjs",
+  "module": "./dist/prism-glass.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/prism-glass.js",
+      "require": "./dist/prism-glass.cjs"
+    }
+  },
+  "files": ["dist", "LICENSE", "README.md"],
+  "scripts": {
+    "build": "vite build && cp types/index.d.ts dist/index.d.ts"
+  },
+  "peerDependencies": {
+    "@react-three/drei": ">=9",
+    "@react-three/fiber": ">=8",
+    "maath": ">=0.10",
+    "react": ">=18",
+    "react-dom": ">=18",
+    "three": ">=0.160.0"
+  },
+  "keywords": ["react", "webgl", "glass", "refraction", "dispersion", "shader"]
+}

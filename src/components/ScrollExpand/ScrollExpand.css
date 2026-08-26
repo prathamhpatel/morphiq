@@ -1,0 +1,115 @@
+/* ScrollExpand — every value below is derived from --sx-e, the eased
+   scroll progress the component writes on .scroll-expand. Nothing here
+   is set from JS, so the whole look is tunable in one place. */
+
+.scroll-expand {
+  /* written each frame */
+  --sx-p: 0;
+  --sx-e: 0;
+
+  /* configuration (overridden by props via inline style) */
+  --sx-w: 42;
+  --sx-h: 58;
+  --sx-r: 24;
+  --sx-r-end: 0;
+  --sx-zoom: 1.35;
+  --sx-scrim: 0.45;
+  --sx-travel: 1.2;
+  --sx-hold: 0.35;
+
+  /* derived: the frame opens from --sx-w/h percent to full bleed */
+  --sx-fw: calc(var(--sx-w) + (100 - var(--sx-w)) * var(--sx-e));
+  --sx-fh: calc(var(--sx-h) + (100 - var(--sx-h)) * var(--sx-e));
+  --sx-ix: calc((100 - var(--sx-fw)) * 0.5 * 1%);
+  --sx-iy: calc((100 - var(--sx-fh)) * 0.5 * 1%);
+  --sx-rr: calc((var(--sx-r) + (var(--sx-r-end) - var(--sx-r)) * var(--sx-e)) * 1px);
+
+  position: relative;
+  display: block;
+  /* one viewport to sit in, plus the scroll budget for the open and the hold */
+  height: calc((1 + var(--sx-travel) + var(--sx-hold)) * 100svh);
+}
+
+.scroll-expand__pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* clip-path opens the frame without touching layout */
+.scroll-expand__frame {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(var(--sx-iy) var(--sx-ix) round var(--sx-rr));
+}
+
+.scroll-expand__media {
+  position: absolute;
+  inset: 0;
+  transform: scale(calc(var(--sx-zoom) + (1 - var(--sx-zoom)) * var(--sx-e)));
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.scroll-expand__media > :is(img, video, canvas, picture, svg),
+.scroll-expand__media > picture > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.scroll-expand__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.15) 40%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  opacity: calc(var(--sx-scrim) * var(--sx-e));
+}
+
+/* free-form layer over the frame; children are positioned by the consumer */
+.scroll-expand__stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scroll-expand__stage > * {
+  pointer-events: auto;
+}
+
+/* --- stock slots -------------------------------------------------------- */
+
+/* leaves as the panel opens */
+.scroll-expand [data-sx='out'] {
+  --a: clamp(0, (var(--sx-e) - 0.32) / 0.48, 1);
+  opacity: calc(1 - var(--a));
+  transform: translate3d(0, calc(var(--a) * -28px), 0) scale(calc(1 + var(--a) * 0.06));
+}
+
+/* arrives once the panel is nearly open */
+.scroll-expand [data-sx='in'] {
+  --a: clamp(0, (var(--sx-e) - 0.66) / 0.34, 1);
+  opacity: var(--a);
+  transform: translate3d(0, calc((1 - var(--a)) * 18px), 0);
+}
+
+/* goes on the first flick of the wheel */
+.scroll-expand [data-sx='hint'] {
+  --a: clamp(0, var(--sx-p) / 0.12, 1);
+  opacity: calc(1 - var(--a));
+  transform: translate3d(0, calc(var(--a) * 8px), 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-expand__media {
+    transform: none;
+  }
+}

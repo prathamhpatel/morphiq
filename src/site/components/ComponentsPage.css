@@ -1,0 +1,372 @@
+@import '../fonts.css';
+
+/* Figma: "Components" (454:456). Dark hero gradient over the first viewport,
+   settling into the same blue wash the landing uses below it. */
+
+.docs {
+  --line: #142544;
+  --panel: #08101e;
+  --accent: #639aff;
+  --gutter: clamp(20px, 4.2vw, 64px);
+
+  min-height: 100svh;
+  font-family: 'Author', 'Inter', -apple-system, sans-serif;
+  color: #fff;
+  background: #071227;
+}
+
+/* ---------------------------------------------------------- top bar --- */
+
+.docs__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px var(--gutter);
+  border-bottom: 2px solid var(--line);
+}
+
+.docs__lead {
+  display: flex;
+  align-items: center;
+  gap: clamp(24px, 4.2vw, 64px);
+}
+
+.docs__wordmark {
+  font-family: inherit;
+  font-size: clamp(22px, 2.1vw, 30px);
+  font-weight: 500;
+  line-height: 1;
+  color: #fff;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.docs__nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(24px, 4.2vw, 64px);
+}
+
+.docs__navlink {
+  font-family: inherit;
+  font-size: clamp(14px, 1.05vw, 16px);
+  font-weight: 400;
+  line-height: 1;
+  color: #fff;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 10px 0 8px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.docs__navlink:hover {
+  opacity: 1;
+}
+
+.docs__navlink.is-active {
+  font-weight: 500;
+  border-bottom-color: #fff;
+  opacity: 1;
+}
+
+.docs__tools {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.docs__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 220px;
+  padding: 8px 10px;
+  border: 2px solid #172b50;
+  border-radius: 8px;
+  background: #000;
+}
+
+.docs__search img {
+  width: 17px;
+  height: 17px;
+}
+
+.docs__search input {
+  flex: 1;
+  min-width: 0;
+  font-family: inherit;
+  font-size: 15px;
+  color: #fff;
+  background: none;
+  border: 0;
+  outline: none;
+}
+
+.docs__search input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.docs__github {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: #0945b1;
+  font-size: clamp(14px, 1.05vw, 16px);
+  color: #fff;
+  text-decoration: none;
+}
+
+.docs__github img {
+  width: 17px;
+  height: 17px;
+}
+
+/* ----------------------------------------------------------- layout --- */
+
+.docs__body {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: clamp(28px, 4.5vw, 68px);
+  padding: 44px var(--gutter) 140px;
+}
+
+/* ---------------------------------------------------------- sidebar --- */
+
+.docs__side {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.side-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.side-group__title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+/* the rail the items hang off */
+.side-group__list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  list-style: none;
+  padding: 4px 0 4px 18px;
+  border-left: 2px solid rgba(255, 255, 255, 0.22);
+}
+
+.side-link {
+  position: relative;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #fff;
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  opacity: 0.82;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.side-link:hover {
+  opacity: 1;
+}
+
+.side-link.is-active {
+  font-weight: 500;
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* the brighter segment of the rail next to the current page */
+.side-link.is-active::before {
+  content: '';
+  position: absolute;
+  left: -18px;
+  top: -3px;
+  width: 2px;
+  height: calc(100% + 6px);
+  background: var(--accent);
+}
+
+/* ------------------------------------------------------------- main --- */
+
+.docs__title {
+  font-size: clamp(26px, 2.1vw, 32px);
+  font-weight: 600;
+  line-height: 0.88;
+}
+
+.docs__stage {
+  display: grid;
+  place-items: center;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 420px;
+  margin-top: 32px;
+  border: 3px solid var(--line);
+  border-radius: 20px;
+  background: var(--panel);
+}
+
+.docs__section {
+  margin-top: 48px;
+  font-size: clamp(20px, 1.6vw, 24px);
+  font-weight: 500;
+  line-height: 0.88;
+}
+
+.docs__controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 36px 72px;
+  margin-top: 28px;
+  max-width: 1046px;
+}
+
+/* -------------------------------------------------------------- dock --- */
+
+/* The lab components are built to own the viewport — fixed stages and fixed
+   control panels. Contain them to the preview box; nothing else about them
+   is touched. */
+.docs__stage .dock-container {
+  position: static;
+  transform: none;
+}
+
+.docs__stage .glass-shader,
+.docs__stage .fluid-glass,
+.docs__stage .focus-stage,
+.docs__stage .ptd,
+.docs__stage .sxd,
+.docs__stage .ascii-field,
+.docs__stage canvas {
+  position: absolute;
+  inset: 0;
+}
+
+/* the components' own TEST panels are replaced by the Customize section */
+.docs__stage .glass-panel,
+.docs__stage .lens-panel,
+
+.docs__stage .lgc-panel {
+  display: none;
+}
+
+/* ---------------------------------------------------------- controls --- */
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 420px;
+}
+
+.control__label {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.control__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.control__value {
+  font-size: 15px;
+  min-width: 32px;
+}
+
+/* the track and knob are drawn from the design, not the UA default */
+.control__range {
+  flex: 1;
+  height: 34px;
+  margin: 0;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.control__range::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 31px;
+  border: 0;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.control__range::-moz-range-thumb {
+  width: 16px;
+  height: 31px;
+  border: 0;
+  border-radius: 3px;
+  background: #fff;
+}
+
+@media (max-width: 900px) {
+  .docs__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .docs__tools {
+    display: none;
+  }
+}
+
+/* select / text / colour controls, matching the range styling */
+.control__select,
+.control__text {
+  flex: 1;
+  height: 34px;
+  padding: 0 10px;
+  font-family: inherit;
+  font-size: 15px;
+  color: #fff;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+}
+
+.control__text {
+  flex: 0 0 60px;
+  text-align: center;
+}
+
+.control__color {
+  flex: 1;
+  height: 34px;
+  padding: 2px;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.control__color::-webkit-color-swatch-wrapper { padding: 0; }
+.control__color::-webkit-color-swatch { border: 0; border-radius: 4px; }
