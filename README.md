@@ -2,41 +2,32 @@
 
 **Interfaces that move.**
 
-A collection of interactive React components — glass, motion and depth —
-built to make modern interfaces feel alive.
+Interactive React components — glass, motion and depth — built to make modern
+interfaces feel alive.
 
 Open source. Thoughtful motion. No boring interfaces.
 
 ---
 
-## Components
+## Installation
 
-| Component | What it does |
-|---|---|
-| **Prism Glass** | A GPU refractive lens for images and rendered textures. Spectral dispersion, frost and a directional rim light, from an SDF-defined shape — no 3D model required. |
-| **ASCII Field** | A canvas of glyphs that scramble around the cursor and settle back to rest. |
-| **Magnifying Dock** | A dock whose items swell as the pointer nears, on springs. |
-| **Scroll Expand** | A framed panel that opens to full bleed as you scroll past it. |
-| **Pressure Text** | Type that gains weight and width under the cursor. |
-| **Fluid Glass** | A live scene rendered to a buffer and refracted through the same lens. |
-| **Focus Pill** | A glass pill over a shifting backdrop. |
-
-## Getting started
+Add a component straight into your project with the shadcn CLI:
 
 ```bash
-git clone https://github.com/prathamhpatel/morphiq
-cd morphiq
-npm install
-npm run dev
+npx shadcn@latest add @morph/prism-glass
+npx shadcn@latest add @morph/ascii-field
 ```
 
-No configuration needed. The landing page is at `/`; the component docs are
-behind **Components** in the nav.
+The source lands in your codebase — yours to read, edit and own. No runtime
+dependency on Morphiq.
 
-## Using a component
+> **Status:** the registry is being hosted; until it is live, copy a component
+> from `src/components/` directly. Everything below already works.
 
-Every component is fully controlled — each setting is a prop with a default,
-and none of them carry demo UI.
+## Usage
+
+Every component is fully controlled. Each setting is a prop with a sensible
+default, and none of them ship demo UI.
 
 ```jsx
 import { PrismGlass } from '@morphiq/prism-glass'
@@ -53,28 +44,70 @@ import { PrismGlass } from '@morphiq/prism-glass'
 ```
 
 ```jsx
-import AsciiField from './components/AsciiField/AsciiField'
+import AsciiField from '@/components/AsciiField'
 
-<AsciiField radius={51} speed={16} opacity={0.23} spacing={2.3} />
+<AsciiField
+  radius={51}
+  speed={16}
+  opacity={0.23}
+  spacing={2.3}
+  color="#ffffff"
+  background="#071228"
+/>
 ```
 
-## A note on what Prism Glass refracts
+Every prop is live on the docs site, so you can dial a component in before you
+install it.
+
+## Components
+
+| Component | What it does |
+|---|---|
+| **Prism Glass** | A GPU refractive lens for images and rendered textures. Spectral dispersion, frost and a directional rim light, from an SDF-defined shape — no 3D model required. |
+| **ASCII Field** | A canvas of glyphs that scramble around the cursor and settle back to rest. |
+| **Magnifying Dock** | A dock whose items swell as the pointer nears, on springs. |
+| **Scroll Expand** | A framed panel that opens to full bleed as you scroll past it. |
+| **Pressure Text** | Type that gains weight and width under the cursor. |
+| **Fluid Glass** | A live scene rendered to a buffer and refracted through the same lens. |
+| **Focus Pill** | A glass pill over a shifting backdrop. |
+
+## What Prism Glass refracts
 
 Prism Glass is a **texture lens**. It refracts the image or render target you
 give it — it cannot see the DOM behind it, and no WebGL component can. The
 browser gives shaders no access to page pixels.
 
 There are three ways to build glass on the web, and it's worth knowing which
-one you want:
+one you need:
 
 1. **Texture glass** — an image goes into a shader. This is Prism Glass.
 2. **Scene glass** — content is rendered into a WebGL scene, then into a
-   buffer, then refracted. This is what the landing page does, so the cursor
-   lens can bend the headline.
+   buffer, then refracted. This is how the Morphiq landing page lets the
+   cursor lens bend its own headline.
 3. **Backdrop glass** — `backdrop-filter` with an SVG displacement map. The
    only technique that touches live DOM, at lower fidelity.
 
-## Repo layout
+## Contributing
+
+Morphiq is open source and built in the open — new components welcome.
+
+```bash
+git clone https://github.com/prathamhpatel/morphiq
+cd morphiq
+npm install
+npm run dev
+```
+
+No configuration needed. The landing page is at `/`; the component docs sit
+behind **Components** in the nav.
+
+To add a component:
+
+1. Drop it in `src/components/<Name>/`, fully controlled — every setting a
+   prop with a default, no internal panel.
+2. Add it to `SIDEBAR` and `PAGES` in `src/site/components/ComponentsPage.jsx`
+   so it gets a docs page and Customize controls.
+3. Declare it in `registry.json` so the CLI can serve it.
 
 ```
 packages/prism-glass/   the published component
@@ -88,7 +121,7 @@ registry.json           shadcn registry manifest
 
 Set in **Author** by Satya Rajpurohit (Indian Type Foundry), from
 [Fontshare](https://fontshare.com/fonts/author) — free for personal and
-commercial use. Files are in `public/fonts/`.
+commercial use.
 
 ## License
 
