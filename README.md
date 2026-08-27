@@ -72,7 +72,7 @@ Every component is fully controlled. Each setting is a prop with a sensible
 default, and none of them ship demo UI.
 
 ```jsx
-import PrismGlass from '@/components/prism-glass/PrismGlass'
+import PrismGlass from '@/components/prism-glass'
 
 <PrismGlass
   image={photo}
@@ -86,7 +86,7 @@ import PrismGlass from '@/components/prism-glass/PrismGlass'
 ```
 
 ```jsx
-import AsciiField from '@/components/ascii-field/AsciiField'
+import AsciiField from '@/components/ascii-field'
 
 <AsciiField
   radius={51}
