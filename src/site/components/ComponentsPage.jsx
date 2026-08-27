@@ -896,7 +896,7 @@ export default function ComponentsPage({ onNavigate }) {
 
           <a
             className="docs__github"
-            href="https://github.com"
+            href="https://github.com/prathamhpatel/morphiq"
             target="_blank"
             rel="noreferrer"
           >
