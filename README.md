@@ -110,8 +110,6 @@ install it.
 | **Magnifying Dock** | A dock whose items swell as the pointer nears, on springs. |
 | **Scroll Expand** | A framed panel that opens to full bleed as you scroll past it. |
 | **Pressure Text** | Type that gains weight and width under the cursor. |
-| **Fluid Glass** | A live scene rendered to a buffer and refracted through the same lens. |
-| **Focus Pill** | A glass pill over a shifting backdrop. |
 
 ## What Prism Glass refracts
 
