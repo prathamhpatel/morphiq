@@ -7,7 +7,7 @@
       "name": "prism-glass",
       "type": "registry:component",
       "title": "Prism Glass",
-      "description": "A GPU-accelerated refractive lens for images and rendered textures. Spectral dispersion, uniform frost and a directional rim light, from an SDF-defined shape \u2014 no 3D model required. It refracts the texture you give it, not the DOM behind it.",
+      "description": "A GPU-accelerated refractive lens for images and rendered textures. Spectral dispersion, uniform frost and a directional rim light, from an SDF-defined shape — no 3D model required. It refracts the texture you give it, not the DOM behind it.",
       "dependencies": [
         "three",
         "@react-three/fiber",
@@ -17,15 +17,18 @@
       "files": [
         {
           "path": "packages/prism-glass/src/PrismGlass.jsx",
-          "type": "registry:component"
+          "type": "registry:component",
+          "target": "components/prism-glass/PrismGlass.jsx"
         },
         {
           "path": "packages/prism-glass/src/shader.js",
-          "type": "registry:lib"
+          "type": "registry:component",
+          "target": "components/prism-glass/shader.js"
         },
         {
           "path": "packages/prism-glass/src/sdf.js",
-          "type": "registry:lib"
+          "type": "registry:component",
+          "target": "components/prism-glass/sdf.js"
         }
       ]
     },
@@ -38,11 +41,13 @@
       "files": [
         {
           "path": "src/components/AsciiField/AsciiField.jsx",
-          "type": "registry:component"
+          "type": "registry:component",
+          "target": "components/ascii-field/AsciiField.jsx"
         },
         {
           "path": "src/components/AsciiField/AsciiField.css",
-          "type": "registry:component"
+          "type": "registry:file",
+          "target": "components/ascii-field/AsciiField.css"
         }
       ]
     }

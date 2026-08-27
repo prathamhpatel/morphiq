@@ -11,17 +11,29 @@ Open source. Thoughtful motion. No boring interfaces.
 
 ## Installation
 
-Add a component straight into your project with the shadcn CLI:
+Add a component straight into your project with the shadcn CLI. The source lands
+in your codebase — yours to read, edit and own. No runtime dependency on Morphiq.
+
+Any of these work. Pick one.
+
+**1. Straight from GitHub** — nothing to configure:
 
 ```bash
+npx shadcn@latest add prathamhpatel/morphiq/prism-glass
+npx shadcn@latest add prathamhpatel/morphiq/ascii-field
+```
+
+**2. Register the `@morph` namespace once**, then install by short name:
+
+```bash
+npx shadcn@latest registry add "@morph=https://morphiq.prathampatel.design/r/{name}.json"
+
 npx shadcn@latest add @morph/prism-glass
 npx shadcn@latest add @morph/ascii-field
 ```
 
-The source lands in your codebase — yours to read, edit and own. No runtime
-dependency on Morphiq.
-
-First, point the `@morph` namespace at the registry in your `components.json`:
+`registry add` writes the namespace into your `components.json` for you. If you
+would rather do it by hand:
 
 ```json
 {
@@ -31,13 +43,36 @@ First, point the `@morph` namespace at the registry in your `components.json`:
 }
 ```
 
+**3. By URL** — no config, no namespace:
+
+```bash
+npx shadcn@latest add https://morphiq.prathampatel.design/r/prism-glass.json
+```
+
+Browse what is in the registry before you install anything:
+
+```bash
+npx shadcn@latest list @morph
+npx shadcn@latest view @morph/prism-glass
+```
+
+### Requirements
+
+The shadcn CLI needs a project it can read, so make sure you have:
+
+- a `components.json` — run `npx shadcn@latest init -d` if you don't have one
+- a `jsconfig.json` or `tsconfig.json` declaring the `@/*` path alias
+
+Without both, the CLI stops with `Invalid configuration` or
+`Couldn't find tsconfig.json` before it ever reaches the registry.
+
 ## Usage
 
 Every component is fully controlled. Each setting is a prop with a sensible
 default, and none of them ship demo UI.
 
 ```jsx
-import { PrismGlass } from '@morphiq/prism-glass'
+import PrismGlass from '@/components/prism-glass/PrismGlass'
 
 <PrismGlass
   image={photo}
@@ -51,7 +86,7 @@ import { PrismGlass } from '@morphiq/prism-glass'
 ```
 
 ```jsx
-import AsciiField from '@/components/AsciiField'
+import AsciiField from '@/components/ascii-field/AsciiField'
 
 <AsciiField
   radius={51}
