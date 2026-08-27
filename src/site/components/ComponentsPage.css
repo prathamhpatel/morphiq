@@ -7,6 +7,11 @@
   --line: #142544;
   --panel: #08101e;
   --accent: #639aff;
+  /* the accent at rest weight, for hovers and fills */
+  --glow: rgba(99, 154, 255, 0.13);
+  /* cool -> accent -> warm: the dispersion the shader produces, used only on
+     the travelling indicator */
+  --spectral: linear-gradient(var(--spectral-dir, 180deg), #8fd0ff, #639aff 46%, #9b8cff);
   --gutter: clamp(20px, 4.2vw, 64px);
 
   min-height: 100svh;
@@ -32,7 +37,11 @@
   gap: clamp(24px, 4.2vw, 64px);
 }
 
+/* mark + word, the same lockup the landing header uses */
 .docs__wordmark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   font-family: inherit;
   font-size: clamp(22px, 2.1vw, 30px);
   font-weight: 500;
@@ -44,7 +53,15 @@
   cursor: pointer;
 }
 
+/* sized to the cap height of the word beside it, not to its line box */
+.docs__mark {
+  height: clamp(15px, 1.45vw, 21px);
+  width: auto;
+  display: block;
+}
+
 .docs__nav {
+  position: relative;
   display: flex;
   align-items: center;
   gap: clamp(24px, 4.2vw, 64px);
@@ -55,24 +72,37 @@
   font-size: clamp(14px, 1.05vw, 16px);
   font-weight: 400;
   line-height: 1;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.62);
   background: none;
   border: 0;
-  border-bottom: 2px solid transparent;
-  padding: 10px 0 8px;
+  padding: 10px 0 12px;
   cursor: pointer;
-  opacity: 0.8;
-  transition: opacity 0.2s ease;
+  transition: color 0.18s ease;
 }
 
 .docs__navlink:hover {
-  opacity: 1;
+  color: #fff;
 }
 
 .docs__navlink.is-active {
   font-weight: 500;
-  border-bottom-color: #fff;
-  opacity: 1;
+  color: #fff;
+}
+
+/* the light, travelling under the bar */
+.nav-mark {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: var(--mw, 0);
+  border-radius: 2px;
+  --spectral-dir: 90deg;
+  background: var(--spectral);
+  transform: translateX(var(--mx, 0));
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+  pointer-events: none;
 }
 
 .docs__tools {
@@ -87,9 +117,14 @@
   gap: 10px;
   width: 220px;
   padding: 8px 10px;
-  border: 2px solid #172b50;
-  border-radius: 8px;
-  background: #000;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--panel);
+  transition: border-color 0.18s ease;
+}
+
+.docs__search:focus-within {
+  border-color: rgba(99, 154, 255, 0.55);
 }
 
 .docs__search img {
@@ -112,16 +147,28 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* Was a solid #0945b1 block — a second saturated blue fighting the accent for
+   attention in a bar that has one job. Now a quiet control that answers on
+   hover. */
 .docs__github {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   padding: 9px 14px;
-  border-radius: 8px;
-  background: #0945b1;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--panel);
   font-size: clamp(14px, 1.05vw, 16px);
-  color: #fff;
+  color: rgba(255, 255, 255, 0.82);
   text-decoration: none;
+  transition: border-color 0.18s ease, background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.docs__github:hover {
+  border-color: rgba(99, 154, 255, 0.5);
+  background: var(--glow);
+  color: #fff;
 }
 
 .docs__github img {
@@ -173,14 +220,31 @@
   line-height: 1;
 }
 
-/* the rail the items hang off */
+/* the rail the items hang off, and the track the light travels along */
 .side-group__list {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 14px;
   list-style: none;
   padding: 4px 0 4px 18px;
-  border-left: 2px solid rgba(255, 255, 255, 0.22);
+  border-left: 2px solid rgba(255, 255, 255, 0.16);
+}
+
+/* One light per group, moved to the current item rather than redrawn at it.
+   Sits ON the rail: -20px is the 18px padding plus the 2px border. */
+.side-mark {
+  position: absolute;
+  left: -20px;
+  top: 0;
+  width: 2px;
+  height: var(--mh, 0);
+  border-radius: 2px;
+  background: var(--spectral);
+  transform: translateY(var(--my, 0));
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+  pointer-events: none;
 }
 
 .side-link {
@@ -189,35 +253,22 @@
   font-size: 15px;
   font-weight: 400;
   line-height: 1.2;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.66);
   background: none;
   border: 0;
   padding: 0;
   text-align: left;
   cursor: pointer;
-  opacity: 0.82;
-  transition: opacity 0.2s ease, color 0.2s ease;
+  transition: color 0.18s ease;
 }
 
 .side-link:hover {
-  opacity: 1;
+  color: #fff;
 }
 
 .side-link.is-active {
   font-weight: 500;
   color: var(--accent);
-  opacity: 1;
-}
-
-/* the brighter segment of the rail next to the current page */
-.side-link.is-active::before {
-  content: '';
-  position: absolute;
-  left: -18px;
-  top: -3px;
-  width: 2px;
-  height: calc(100% + 6px);
-  background: var(--accent);
 }
 
 /* ------------------------------------------------------------- main --- */
@@ -401,6 +452,19 @@
 
   .side-link {
     white-space: nowrap;
+  }
+
+  /* The rail turned from a left edge into a top edge, so the light has to
+     turn with it: same element, same measurements, other axis. */
+  .side-mark {
+    left: 0;
+    top: -2px;
+    width: var(--mw, 0);
+    height: 2px;
+    --spectral-dir: 90deg;
+    transform: translateX(var(--mx, 0));
+    transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+      width 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
   }
 
   .side-link.is-active::before {
@@ -898,4 +962,112 @@
   .code__bar {
     padding-left: 8px;
   }
+}
+
+
+/* ------------------------------------------------------- quality floor --- */
+
+.docs__navlink:focus-visible,
+.side-link:focus-visible,
+.docs__wordmark:focus-visible,
+.docs__github:focus-visible,
+.toc__link:focus-visible,
+.pagenav__item:focus-visible,
+.code__tab:focus-visible,
+.code__copy:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* The light still marks the right item; it just stops travelling to it. */
+@media (prefers-reduced-motion: reduce) {
+  .nav-mark,
+  .side-mark {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------- preview pane --- */
+
+/* Two views of one thing, so they share a frame: the tabs are attached to the
+   panel they switch, not floating above it. */
+.pane {
+  margin-top: 40px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.pane__tabs {
+  display: flex;
+  gap: 2px;
+  padding: 8px 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.pane__tab {
+  position: relative;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 11px 16px 13px;
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  background: none;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: color 0.18s ease, background-color 0.18s ease;
+}
+
+.pane__tab:hover {
+  color: #fff;
+}
+
+.pane__tab.is-active {
+  color: #fff;
+  background: var(--glow);
+}
+
+/* the same travelling light the navs use, held to the active tab */
+.pane__tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  --spectral-dir: 90deg;
+  background: var(--spectral);
+}
+
+/* the panel owns the frame now, so the stage drops its own */
+.pane .docs__stage {
+  margin-top: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* and the code block fills the panel rather than sitting in a second box */
+.pane .code {
+  margin: 0;
+  max-width: none;
+  border: 0;
+  border-radius: 0;
+}
+
+.pane__hint {
+  margin: 14px 0 0;
+  max-width: 62ch;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.pane__tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }

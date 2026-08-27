@@ -58,6 +58,7 @@ const px = (v) => (v ? parseFloat(v) : 0)
 function readFrame() {
   const card = document.querySelector('.site-hero__card')
   const below = document.querySelector('.site-canvas')
+  const footer = document.querySelector('.site-footer')
   const header = document.querySelector('.site-header')
   const site = document.querySelector('.site')
   if (!card) return null
@@ -72,10 +73,26 @@ function readFrame() {
     radius: px(getComputedStyle(card).borderTopLeftRadius),
     below: below ? below.getBoundingClientRect().top : 1e6,
     belowH: below ? below.getBoundingClientRect().height : 4050,
+    /* Off-screen until it exists, so the blue holds the whole way down. */
+    footer: footer ? footer.getBoundingClientRect().top : 1e6,
     header: header ? header.getBoundingClientRect() : null,
-    /* --in is an unregistered custom property, so getPropertyValue returns the
-       literal clamp() token rather than a number — recompute from --expand. */
-    reveal: Math.min(1, Math.max(0, expand / 0.7)),
+    /* Landing.jsx writes --e-glass as a plain number, so this reads back
+       cleanly. Do NOT switch this to --in: that is a CSS expression, and
+       getPropertyValue hands back the literal token for an unregistered
+       custom property, which parseFloat turns into NaN. The lens then sits
+       silently at zero strength.
+
+       Reading the same track the DOM glass uses keeps the shader pill and the
+       CSS container arriving together. */
+    reveal: site
+      ? Math.min(
+          1,
+          Math.max(
+            0,
+            parseFloat(getComputedStyle(site).getPropertyValue('--e-glass')) || 0
+          )
+        )
+      : 0,
   }
 }
 
@@ -135,6 +152,7 @@ function Content({ nodes, backdrop = null }) {
       u.uRadius.value = f.radius
       u.uBelow.value = f.below
       u.uBelowH.value = f.belowH
+      u.uFooter.value = f.footer
     }
 
     const pad = 200
@@ -185,7 +203,14 @@ function Content({ nodes, backdrop = null }) {
         if (mat) {
           mat.uniforms.uSize.value.set(r.width, r.height)
           mat.uniforms.uRadius.value = n.radius
-          mat.uniforms.uOpacity.value = n.opacity
+          /* n.opacity is the background alpha, sampled once. A surface that
+             fades names a property to scale it by, re-read per frame. */
+          const fade = n.alphaVar
+            ? parseFloat(
+                getComputedStyle(n.el).getPropertyValue(n.alphaVar)
+              ) || 0
+            : 1
+          mat.uniforms.uOpacity.value = n.opacity * fade
         }
       }
     })

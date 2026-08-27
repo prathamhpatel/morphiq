@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Dock from '../../components/Dock/Dock.jsx'
 
 /* The other components are shown exactly as the lab shows them — same
@@ -12,7 +12,10 @@ const PrismGlass = lazy(() =>
 )
 import searchIcon from './icons/search.svg'
 import githubIcon from './icons/github.svg'
-import backdrop from '../../components/Glass/backdrop.png'
+/* The Prism Glass preview refracts our own artwork rather than a stock photo
+   — the lens breaking across the wordmark reads as the component arguing for
+   itself. Same file FluidGlass uses; one copy, not two. */
+import backdrop from '../../components/FluidGlass/morphiqbg.png'
 import cursorMask from '../../components/FluidGlass/cursor.svg'
 import './ComponentsPage.css'
 
@@ -153,6 +156,41 @@ const DOC_PAGES = {
         kind: 'code',
         text: 'npx shadcn@latest list @morph\nnpx shadcn@latest view @morph/prism-glass',
         pm: true,
+      },
+
+      { kind: 'h', text: 'What lands in your project' },
+      {
+        kind: 'p',
+        text: 'Each component arrives as a self-contained folder under whatever your components.json alias points at. Nothing else in your project is touched, and nothing is left pointing back at us.',
+      },
+      {
+        kind: 'code',
+        label: 'files',
+        text: `src/
+└─ components/
+   ├─ prism-glass/
+   │  ├─ index.js          the import target
+   │  ├─ PrismGlass.jsx    the component
+   │  ├─ shader.js         GLSL: refraction, dispersion, frost, rim light
+   │  └─ sdf.js            shape masks
+   └─ ascii-field/
+      ├─ index.js
+      ├─ AsciiField.jsx
+      └─ AsciiField.css`,
+      },
+      {
+        kind: 'p',
+        text: 'Keeping each component in its own folder is what lets its files import each other by name. It also keeps generic names like shader.js out of your components root, where they would collide with your own.',
+      },
+
+      { kind: 'h', text: 'Check it worked' },
+      {
+        kind: 'p',
+        text: 'Build once after installing. A component that renders in isolation can still be missing a package, and the CLI reports success either way — it installs what a registry declares, so an under-declared entry produces files that will not compile.',
+      },
+      {
+        kind: 'note',
+        text: 'If a build fails on a missing package straight after installing, that is our bug and not yours. Open an issue with the resolve error and we will fix the entry.',
       },
 
       { kind: 'h', text: 'Using them' },
@@ -361,6 +399,76 @@ function Preview({ name, v }) {
       magnifiedSize={Math.round(v.itemSize * (1 + (v.magnification / 100) * 0.8))}
     />
   )
+}
+
+/* ------------------------------------------------------------- live code ---
+
+   Kept directly below Preview on purpose: these two must agree branch for
+   branch. If they drift, someone copies a snippet that does not produce the
+   component they are looking at — which is worse than no snippet at all.
+   Every transform here (opacity/100, spacing/100) mirrors one up there. */
+const n = (x) => (Number.isInteger(x) ? x : +x.toFixed(2))
+
+function snippetFor(name, v) {
+  if (name === 'ASCII Field') {
+    return `import AsciiField from '@/components/ascii-field'
+
+<AsciiField
+  radius={${v.radius}}
+  speed={${v.speed}}
+  opacity={${n(v.opacity / 100)}}
+  spacing={${n(v.spacing / 100)}}
+  rest="${v.rest}"
+  color="${v.color}"
+  background="${v.background}"
+/>`
+  }
+
+  if (name === 'Scroll Expand') {
+    return `import ScrollExpand from '@/components/scroll-expand'
+
+<ScrollExpand
+  width={${v.width}}
+  height={${v.height}}
+  radius={${v.radius}}
+  endRadius={${v.endRadius}}
+  zoom={${n(v.zoom / 100)}}
+  scrim={${n(v.scrim / 100)}}
+  travel={${n(v.travel / 100)}}
+  hold={${n(v.hold / 100)}}
+  smoothing={${n(v.smoothing / 100)}}
+  falloff="${v.falloff}"
+/>`
+  }
+
+  if (name === 'Prism Glass') {
+    const shape = v.shape === 'svg' ? 'circle' : v.shape
+    const size = ROUND.has(v.shape) ? `{${v.size}}` : `{[${v.w}, ${v.h}]}`
+    const mask = v.shape === 'svg' ? '\n  mask={cursorMask}' : ''
+    return `import PrismGlass from '@/components/prism-glass'
+
+<PrismGlass
+  image={photo}
+  shape="${shape}"${mask}
+  mode="${v.mode}"
+  size=${size}
+  position={[0.5, 0.5]}
+  refraction={${v.refraction}}
+  depth={${v.depth}}
+  dispersion={${v.dispersion}}
+  frost={${v.frost}}
+  splay={${v.splay}}
+  lightAngle={${v.lightAngle}}
+  lightIntensity={${v.lightIntensity}}
+/>`
+  }
+
+  return `import Dock from '@/components/dock'
+
+<Dock
+  baseSize={${v.itemSize}}
+  magnifiedSize={${Math.round(v.itemSize * (1 + (v.magnification / 100) * 0.8))}}
+/>`
 }
 
 function Control({ c, value, onChange }) {
@@ -602,6 +710,79 @@ function PageNav({ active, onPick }) {
   )
 }
 
+/* ---------------------------------------------------------- the indicator ---
+
+   Morphiq is a refraction library, so its navigation borrows the one thing
+   the library actually does: a light that travels and splits. Rather than a
+   marker blinking off one item and on at another, ONE element measures the
+   active item and moves to it. The gradient runs cool -> accent -> warm, which
+   is the dispersion the shader produces; at 2px it reads as an accent line
+   with a hint of iridescence at the ends.
+
+   Measurement, not CSS: the items are text of different widths, so the only
+   honest source for where the light should sit is the live box. */
+function useTravellingMark(activeKey, selector) {
+  const ref = useRef(null)
+  const [mark, setMark] = useState(null)
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const host = ref.current
+      const el = host?.querySelector(selector)
+      if (!el) return setMark(null)
+      setMark({
+        x: el.offsetLeft,
+        y: el.offsetTop,
+        w: el.offsetWidth,
+        h: el.offsetHeight,
+      })
+    }
+
+    measure()
+    /* Re-measure when the boxes can move underneath us: a resize reflows the
+       row, and a late webfont changes every width. */
+    window.addEventListener('resize', measure)
+    document.fonts?.ready.then(measure).catch(() => {})
+    return () => window.removeEventListener('resize', measure)
+  }, [activeKey, selector])
+
+  const style = mark
+    ? {
+        '--mx': `${mark.x}px`,
+        '--my': `${mark.y}px`,
+        '--mw': `${mark.w}px`,
+        '--mh': `${mark.h}px`,
+        opacity: 1,
+      }
+    : { opacity: 0 }
+
+  return [ref, style]
+}
+
+function SideGroup({ group, active, onPick }) {
+  const [listRef, mark] = useTravellingMark(active, '.side-link.is-active')
+
+  return (
+    <section className="side-group">
+      <h2 className="side-group__title">{group.title}</h2>
+      <ul className="side-group__list" ref={listRef}>
+        {group.items.map((item) => (
+          <li key={item}>
+            <button
+              type="button"
+              className={`side-link${item === active ? ' is-active' : ''}`}
+              onClick={() => onPick(item)}
+            >
+              {item}
+            </button>
+          </li>
+        ))}
+        <span className="side-mark" style={mark} aria-hidden="true" />
+      </ul>
+    </section>
+  )
+}
+
 function DocBlocks({ blocks }) {
   return blocks.map((b, i) => {
     if (b.kind === 'h')
@@ -649,6 +830,13 @@ export default function ComponentsPage({ onNavigate }) {
 
   const set = (key, n) => setValues((v) => ({ ...v, [key]: n }))
 
+  const [navRef, navMark] = useTravellingMark('Components', '.docs__navlink.is-active')
+
+  /* Preview by default, and back to it on every page change — landing on Code
+     for a component you have not looked at yet is the wrong first screen. */
+  const [tab, setTab] = useState('preview')
+  useEffect(() => setTab('preview'), [active])
+
   /* The rail mirrors whatever the page actually renders: prose headings for a
      written page, the fixed section stack for a component page. */
   const tocItems = doc
@@ -656,10 +844,14 @@ export default function ComponentsPage({ onNavigate }) {
         .filter((b) => b.kind === 'h')
         .map((b) => ({ id: slug(b.text), text: b.text }))
     : [
-        { id: 'preview', text: 'Preview' },
-        { id: 'customize', text: 'Customize' },
+        { id: 'preview', text: tab === 'code' ? 'Code' : 'Preview' },
+        ...(tab === 'preview'
+          ? [
+              { id: 'customize', text: 'Customize' },
+              { id: 'props', text: 'Your settings' },
+            ]
+          : []),
         ...(page.install ? [{ id: 'installation', text: 'Installation' }] : []),
-        ...(page.usage ? [{ id: 'usage', text: 'Usage' }] : []),
       ]
 
   // The app shell locks html/body overflow for the component lab; this page
@@ -678,10 +870,11 @@ export default function ComponentsPage({ onNavigate }) {
             className="docs__wordmark"
             onClick={() => onNavigate?.('site')}
           >
+            <img className="docs__mark" src="/logo.svg" alt="" />
             Morphiq
           </button>
 
-          <nav className="docs__nav">
+          <nav className="docs__nav" ref={navRef}>
             {NAV.map((label) => (
               <button
                 key={label}
@@ -691,6 +884,7 @@ export default function ComponentsPage({ onNavigate }) {
                 {label}
               </button>
             ))}
+            <span className="nav-mark" style={navMark} aria-hidden="true" />
           </nav>
         </div>
 
@@ -715,22 +909,12 @@ export default function ComponentsPage({ onNavigate }) {
       <div className="docs__body">
         <aside className="docs__side">
           {SIDEBAR.map((group) => (
-            <section key={group.title} className="side-group">
-              <h2 className="side-group__title">{group.title}</h2>
-              <ul className="side-group__list">
-                {group.items.map((item) => (
-                  <li key={item}>
-                    <button
-                      type="button"
-                      className={`side-link${item === active ? ' is-active' : ''}`}
-                      onClick={() => pick(item)}
-                    >
-                      {item}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <SideGroup
+              key={group.title}
+              group={group}
+              active={active}
+              onPick={pick}
+            />
           ))}
         </aside>
 
@@ -748,42 +932,67 @@ export default function ComponentsPage({ onNavigate }) {
             <>
               <p className="prose__lede prose__lede--tight">{page.blurb}</p>
 
-              <h2 id="preview" className="docs__section docs__section--first">
-                Preview
-              </h2>
-
-              <div className="docs__stage" key={active}>
-                <Suspense fallback={null}>
-                  <Preview name={active} v={values} />
-                </Suspense>
-              </div>
-
-              <h2 id="customize" className="docs__section">Customize</h2>
-
-              <div className="docs__controls">
-                {page.controls
-                  .filter((c) => !c.when || c.when(values))
-                  .map((c) => (
-                    <Control
-                      key={c.key}
-                      c={c}
-                      value={values[c.key]}
-                      onChange={(n) => set(c.key, n)}
-                    />
+              {/* Preview and Code are two views of one thing: the code is
+                  generated from the same values driving the component above,
+                  so what you copy is what you dialled in — not a fixed
+                  example someone has to translate. */}
+              <div className="pane" id="preview">
+                <div className="pane__tabs" role="tablist">
+                  {['preview', 'code'].map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      role="tab"
+                      aria-selected={tab === t}
+                      className={`pane__tab${tab === t ? ' is-active' : ''}`}
+                      onClick={() => setTab(t)}
+                    >
+                      {t === 'preview' ? 'Preview' : 'Code'}
+                    </button>
                   ))}
+                </div>
+
+                {tab === 'preview' ? (
+                  <div className="docs__stage" key={active}>
+                    <Suspense fallback={null}>
+                      <Preview name={active} v={values} />
+                    </Suspense>
+                  </div>
+                ) : (
+                  <CodeBlock text={snippetFor(active, values)} label="jsx" />
+                )}
               </div>
+
+              {tab === 'preview' ? (
+                <>
+                  <h2 id="customize" className="docs__section">Customize</h2>
+
+                  <div className="docs__controls">
+                    {page.controls
+                      .filter((c) => !c.when || c.when(values))
+                      .map((c) => (
+                        <Control
+                          key={c.key}
+                          c={c}
+                          value={values[c.key]}
+                          onChange={(n) => set(c.key, n)}
+                        />
+                      ))}
+                  </div>
+
+                  <h2 id="props" className="docs__section">Your settings</h2>
+                  <p className="pane__hint">
+                    Every change above rewrites this. Copy it and the component
+                    comes out exactly as you have it here.
+                  </p>
+                  <CodeBlock text={snippetFor(active, values)} label="jsx" />
+                </>
+              ) : null}
 
               {page.install ? (
                 <>
                   <h2 id="installation" className="docs__section">Installation</h2>
                   <CodeBlock text={page.install} pm />
-                </>
-              ) : null}
-
-              {page.usage ? (
-                <>
-                  <h2 id="usage" className="docs__section">Usage</h2>
-                  <CodeBlock text={page.usage} label="jsx" />
                 </>
               ) : null}
             </>

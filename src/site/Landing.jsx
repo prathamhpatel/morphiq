@@ -45,23 +45,75 @@ const NAV = [
   { label: 'GitHub', href: 'https://github.com' },
 ]
 
+/* The real roster. `ready` marks what the registry serves today — two of six —
+   which is the one thing a visitor most needs to know, so the cards carry it
+   rather than the page claiming everything is installable. */
 const SHOWCASE = [
-  { name: 'Liquid Glass', note: 'Interfaces with depth, blur and light.' },
-  { name: 'Morphing Cards', note: 'Components that transform as you interact.' },
-  { name: 'Aurora', note: 'Dynamic backgrounds for immersive interfaces.' },
-  { name: 'Magnetic Buttons', note: 'Buttons that respond to your cursor.' },
-  { name: 'Text Motion', note: 'Typography that does not just sit there.' },
+  {
+    name: 'Prism Glass',
+    note: 'A refractive lens with real spectral dispersion, frost and a directional rim light. Shapes come from signed distance fields, not a 3D model.',
+    ready: true,
+  },
+  {
+    name: 'ASCII Field',
+    note: 'A canvas of glyphs that scramble around the cursor and settle back to rest.',
+    ready: true,
+  },
+  {
+    name: 'Magnifying Dock',
+    note: 'A dock whose items swell as the pointer nears, on springs. Distance drives the scale, so the row breathes.',
+  },
+  {
+    name: 'Scroll Expand',
+    note: 'A framed panel that opens to full bleed as you scroll past it.',
+  },
+  {
+    name: 'Pressure Text',
+    note: 'Type that gains weight and width under the cursor, while the word keeps its measure.',
+  },
+  {
+    name: 'Fluid Glass',
+    note: 'A live scene rendered to a buffer, then refracted through the same lens.',
+  },
 ]
 
 const PRINCIPLES = [
-  'Beautiful by default',
-  'Interactive and animated',
-  'Built for React',
-  'Easy to customize',
-  'Made for real products',
+  'Refraction, not a blur filter',
+  'Every setting is a prop',
+  'Source you own, not a dependency',
+  'No demo UI baked in',
+  'Read before you install',
 ]
 
-const STACK = ['React + TypeScript', 'Tailwind CSS', 'Composable APIs', 'Fully customizable']
+const STACK = ['React 19', 'shadcn CLI', 'No Tailwind required', 'MIT licensed']
+
+const FOOTER = [
+  {
+    title: 'Components',
+    links: [
+      { label: 'Prism Glass', view: 'docs' },
+      { label: 'ASCII Field', view: 'docs' },
+      { label: 'Magnifying Dock', view: 'docs' },
+      { label: 'Scroll Expand', view: 'docs' },
+    ],
+  },
+  {
+    title: 'Get started',
+    links: [
+      { label: 'Introduction', view: 'docs' },
+      { label: 'Installation', view: 'docs' },
+      { label: 'Playground', view: 'glass' },
+    ],
+  },
+  {
+    title: 'Project',
+    links: [
+      { label: 'GitHub', href: 'https://github.com/prathamhpatel/morphiq' },
+      { label: 'Registry', href: 'https://morphiq.prathampatel.design/r/registry.json' },
+      { label: 'MIT licence', href: 'https://github.com/prathamhpatel/morphiq/blob/main/LICENSE' },
+    ],
+  },
+]
 
 export default function Landing({ onNavigate }) {
   const rootRef = useRef(null)
@@ -105,17 +157,44 @@ export default function Landing({ onNavigate }) {
     }
   }, [])
 
-  // Scroll progress -> --expand, which drives the card inset and radius.
+  /*
+   * Scroll progress -> --expand, which drives the card inset and radius.
+   *
+   * The header reads three EASED tracks off the same progress rather than
+   * --expand itself. Driving every value linearly off one number made the bar
+   * look like it was being squashed by a slider: six ramps moving in lockstep,
+   * none of them settling. Splitting them gives the move an order —
+   *
+   *   geo    the bar gathers: position and inset, out fast, refining late
+   *   type   the lockup follows a beat behind, so it reads as layered
+   *   glass  the container materialises LAST, around content already at rest
+   *
+   * Glass arriving last is the point. The pill means "the nav is its own
+   * floating object now", so it should confirm the gather rather than
+   * announce it — previously it was fully opaque by 0.7 while the type was
+   * still shrinking inside it.
+   */
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
 
     let frame = 0
 
+    const outCubic = (t) => 1 - Math.pow(1 - t, 3)
+    const inOutCubic = (t) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+    /* remap [a,b] of the scroll onto a full 0..1 track */
+    const seg = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)))
+
     const write = () => {
       frame = 0
       const p = Math.min(1, Math.max(0, window.scrollY / EXPAND_DISTANCE))
-      root.style.setProperty('--expand', p.toFixed(4))
+      const set = (k, v) => root.style.setProperty(k, v.toFixed(4))
+
+      set('--expand', p)
+      set('--e-geo', outCubic(p))
+      set('--e-type', outCubic(seg(p, 0.08, 1)))
+      set('--e-glass', inOutCubic(seg(p, 0.3, 1)))
     }
 
     const onScroll = () => {
@@ -149,6 +228,17 @@ export default function Landing({ onNavigate }) {
       <HeroCanvas />
 
       <header className="site-header" ref={headerRef}>
+        {/* The nav glass is a refraction pass: it bends what is behind it but
+            does not dim it, so hero copy scrolling under the bar collided with
+            the wordmark. This plate gives the bar something to sit on. It is a
+            mirrored surface, so it draws under the header's own text. */}
+        <div
+          className="site-header__plate"
+          data-gl="surface"
+          data-gl-top
+          data-gl-alpha="--e-glass"
+        />
+
         <button
           type="button"
           className="site-wordmark"
@@ -258,12 +348,12 @@ export default function Landing({ onNavigate }) {
         <section className="sx sx--showcase">
           <p className="sx__eyebrow" data-gl="text">Components</p>
           <h2 className="sx__title" data-gl="text" data-gl-cap>
-            Built to make your UI feel different.
+            Six components, written to be read.
           </h2>
           <p className="sx__sub" data-gl="text">
-            Animated cards, glass effects, buttons, navigation, backgrounds,
-            text effects, loaders and interactive elements — designed to work
-            beautifully together.
+            Glass, motion and depth. Each one is fully controlled — every
+            setting is a prop with a sensible default, and none of them ship a
+            control panel of their own.
           </p>
 
           <div className="sx__grid">
@@ -275,12 +365,23 @@ export default function Landing({ onNavigate }) {
                 <p className="card__note" data-gl="text">
                   {c.note}
                 </p>
+                <p
+                  className={`card__status${c.ready ? ' is-ready' : ''}`}
+                  data-gl="text"
+                >
+                  {c.ready ? 'Install today' : 'On the site'}
+                </p>
               </article>
             ))}
           </div>
 
-          <button type="button" className="sx__link" data-gl="text" onClick={() => go('glass')}>
-            Browse all components
+          <button
+            type="button"
+            className="sx__link"
+            data-gl="text"
+            onClick={() => go('docs')}
+          >
+            Browse the components
           </button>
         </section>
 
@@ -289,8 +390,10 @@ export default function Landing({ onNavigate }) {
             Not another component library.
           </h2>
           <p className="sx__sub" data-gl="text">
-            Morphiq is built for developers who care about how an interface
-            feels, not just how it functions.
+            Most &ldquo;glass&rdquo; components are a blur filter under a white
+            overlay. Prism Glass is a real shader: dispersion integrated across
+            28 samples of the spectrum, frost as a golden-angle disc blur, and
+            edges that bend what is behind them rather than smearing it.
           </p>
 
           <ul className="sx__list">
@@ -304,28 +407,32 @@ export default function Landing({ onNavigate }) {
 
         <section className="sx sx--belief">
           <h2 className="sx__title sx__title--wide" data-gl="text" data-gl-cap>
-            We believe interfaces shouldn&rsquo;t feel static.
+            You get the source, not a dependency.
           </h2>
           <p className="sx__lead" data-gl="text">
-            The web is interactive. Your UI should be too.
+            Installing a component copies its files into your project.
           </p>
           <p className="sx__sub" data-gl="text">
-            Morphiq combines thoughtful design, motion, depth and interaction to
-            create components that feel alive without getting in the way.
+            There is no package to keep up to date and no build step of ours
+            between you and the pixels. If a component is ninety percent right,
+            change the other ten. This page is the proof: everything on it is
+            drawn by the components themselves.
           </p>
         </section>
 
         <section className="sx sx--build">
           <h2 className="sx__title" data-gl="text" data-gl-cap>
-            Copy. Customize. Create.
+            One command, then it is yours.
           </h2>
           <p className="sx__sub" data-gl="text">
-            Production-ready components, without spending hours recreating
-            beautiful interactions from scratch.
+            Components install with the shadcn CLI, straight into the folder
+            your project already uses.
           </p>
 
           <div className="sx__install" data-gl="surface">
-            <code className="sx__code" data-gl="text">npm install morphiq</code>
+            <code className="sx__code" data-gl="text">
+              npx shadcn@latest add @morph/prism-glass
+            </code>
           </div>
 
           <ul className="sx__chips">
@@ -338,7 +445,12 @@ export default function Landing({ onNavigate }) {
             ))}
           </ul>
 
-          <button type="button" className="sx__link" data-gl="text">
+          <button
+            type="button"
+            className="sx__link"
+            data-gl="text"
+            onClick={() => onNavigate?.('docs')}
+          >
             Read the documentation
           </button>
         </section>
@@ -348,9 +460,9 @@ export default function Landing({ onNavigate }) {
             Built in the open.
           </h2>
           <p className="sx__sub" data-gl="text">
-            Morphiq is open source and made for the community. Use it, customize
-            it, build something amazing with it — and if you make something
-            cool, share it back.
+            MIT licensed. Use it, ship it, sell what you build with it. The
+            registry, the shader and this site are all in the repository — and
+            new components are welcome.
           </p>
           <a
             className="sx__link"
@@ -367,7 +479,9 @@ export default function Landing({ onNavigate }) {
           <h2 className="sx__title sx__title--big" data-gl="text" data-gl-cap>
             Make your interface move.
           </h2>
-          <p className="sx__sub" data-gl="text">Start building with Morphiq.</p>
+          <p className="sx__sub" data-gl="text">
+            Start with Prism Glass. It takes one line.
+          </p>
           <button
             type="button"
             className="site-cta"
@@ -379,6 +493,75 @@ export default function Landing({ onNavigate }) {
             </span>
           </button>
         </section>
+
+        {/* Inside .site-canvas so the backdrop shader, which paints everything
+            below the hero, can darken its ground from this element's measured
+            top. Move the footer and the dark block moves with it. */}
+        <footer className="site-footer">
+          <div className="site-footer__top">
+            <div className="site-footer__brand">
+              <img
+                className="site-footer__mark"
+                src="/logo.svg"
+                alt=""
+                data-gl="image"
+                data-gl-src="/logo.svg"
+              />
+              <p className="site-footer__line" data-gl="text">
+                Interfaces that move. Open code, MIT licensed.
+              </p>
+            </div>
+
+            {FOOTER.map((col) => (
+              <nav key={col.title} className="site-footer__col">
+                <p className="site-footer__label" data-gl="text">
+                  {col.title}
+                </p>
+                {col.links.map((l) =>
+                  l.href ? (
+                    <a
+                      key={l.label}
+                      className="site-footer__link"
+                      data-gl="text"
+                      href={l.href}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {l.label}
+                    </a>
+                  ) : (
+                    <button
+                      key={l.label}
+                      type="button"
+                      className="site-footer__link"
+                      data-gl="text"
+                      onClick={() => go(l.view)}
+                    >
+                      {l.label}
+                    </button>
+                  )
+                )}
+              </nav>
+            ))}
+          </div>
+
+          <p className="site-footer__made">
+            <span data-gl="text">created with</span>
+            <span className="site-footer__heart" data-gl="text">
+              &#9829;
+            </span>
+            <span data-gl="text">by</span>
+            <a
+              className="site-footer__who"
+              data-gl="text"
+              href="https://prathampatel.design"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Pratham Patel
+            </a>
+          </p>
+        </footer>
       </div>
 
     </div>
