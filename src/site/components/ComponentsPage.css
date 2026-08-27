@@ -234,9 +234,11 @@
   line-height: 0.88;
 }
 
+/* min() on the track floor, not a bare 360px: auto-fit will happily create a
+   column wider than its container, and a phone's column is ~350px. */
 .docs__controls {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
   gap: 36px 72px;
   margin-top: 28px;
   max-width: 1046px;
@@ -333,8 +335,87 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* the search box; the nav below keeps every destination reachable */
   .docs__tools {
     display: none;
+  }
+
+  /* Five destinations do not fit a phone's bar, and the ones that fall off
+     the right edge are simply unreachable. Let the row scroll. */
+  .docs__nav {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .docs__nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .docs__navlink {
+    white-space: nowrap;
+  }
+
+  /* Stacked, the sidebar is a full screen of links before you reach the
+     component you came to see. Lay it out as scrolling rows instead, so the
+     preview stays above the fold. */
+  .docs__side {
+    flex-direction: row;
+    gap: 28px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .docs__side::-webkit-scrollbar {
+    display: none;
+  }
+
+  .side-group {
+    gap: 12px;
+  }
+
+  /* the rail turns from a left edge into an underline */
+  .side-group__list {
+    flex-direction: row;
+    gap: 18px;
+    padding: 10px 0 0;
+    border-left: 0;
+    border-top: 2px solid rgba(255, 255, 255, 0.22);
+  }
+
+  .side-link {
+    white-space: nowrap;
+  }
+
+  .side-link.is-active::before {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .docs__bar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .docs__lead {
+    gap: 20px;
+  }
+
+  .docs__body {
+    padding: 28px var(--gutter) 80px;
+  }
+
+  /* 420px of empty box pushes the controls off a phone screen entirely */
+  .docs__stage {
+    min-height: 300px;
+    margin-top: 24px;
+  }
+
+  .docs__controls {
+    gap: 24px;
   }
 }
 

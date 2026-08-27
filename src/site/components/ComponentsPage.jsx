@@ -42,7 +42,7 @@ const SIDEBAR = [
    component's own defaults. */
 const PAGES = {
   'Magnifying Dock': {
-    title: 'Magnifying Doc',
+    title: 'Magnifying Dock',
     state: { magnification: 90, itemSize: 40 },
     controls: [
       { key: 'magnification', label: 'Magnification', min: 0, max: 100 },

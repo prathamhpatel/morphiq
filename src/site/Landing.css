@@ -14,14 +14,19 @@
   --rail-stuck: min(var(--rail), 64px);
   /* ...and draws in by this much, becoming one glass container.
      36px of inset + 26px of container padding = 62px of travel, so the
-     wordmark and nav each move about half a rail's worth closer. */
-  --header-x: calc(var(--gutter) + 36px);
+     wordmark and nav each move about half a rail's worth closer. The draw-in
+     has to shrink with the gutter or it eats a phone's whole header. */
+  --draw-in: clamp(10px, 2.5vw, 36px);
+  --header-x: calc(var(--gutter) + var(--draw-in));
 
   /* driven by scroll: 0 = at rest, 1 = fully expanded */
   --expand: 0;
   --expand-travel: 420px;
-  --card-inset: calc(32px * (1 - var(--expand)));
-  --card-radius: calc(36px * (1 - var(--expand)));
+  /* The card's inset MUST stay smaller than --gutter at every width, or the
+     content it frames spills out past its own rounded corners. 32px is the
+     Figma value and holds from about 1440px up. */
+  --card-inset: calc(clamp(14px, 2.22vw, 32px) * (1 - var(--expand)));
+  --card-radius: calc(clamp(20px, 2.5vw, 36px) * (1 - var(--expand)));
 
   --ink: #dfdfdf;
   --accent: #99bdff;
@@ -300,14 +305,66 @@
   }
 }
 
+/* ------------------------------------------------------------ responsive --- */
+
+/* Tablet: the hero's bottom-aligned copy still has room, but the nav needs
+   its gap back before the links start colliding. */
+@media (max-width: 1024px) {
+  .site-nav {
+    gap: clamp(18px, 3.2vw, 40px);
+  }
+}
+
 @media (max-width: 720px) {
+  /* Wordmark on top, nav under it. The glass container wraps both rows, so
+     the header simply becomes two lines tall once it sticks. */
   .site-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
   }
 
+  /* Wrap rather than clip: five links do not fit one 390px row, and a
+     nowrap row silently loses GitHub off the right edge. */
   .site-nav {
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+  }
+
+  /* A hero pinned to the bottom of a tall phone screen leaves most of the
+     card empty. Centre it instead. */
+  .site-hero {
+    justify-content: center;
+  }
+
+  /* The sections stack, so they run much taller than the Figma frame — the
+     4050px floor would otherwise add dead gradient at the end. */
+  .site-canvas {
+    min-height: 0;
+  }
+
+  .site-cta {
+    font-size: 18px;
+    padding: 16px 20px;
+  }
+}
+
+/* Touch devices have no pointer to follow, so the lens would sit frozen
+   wherever the last tap landed. Give the OS its cursor back — HeroCanvas
+   skips the cursor pass under the same query. */
+@media (hover: none), (pointer: coarse) {
+  .site,
+  .site *,
+  .site *::before,
+  .site *::after {
+    cursor: auto;
+  }
+
+  .site-cta,
+  .site-nav__link,
+  .site-wordmark,
+  .sx__link {
+    cursor: pointer;
   }
 }
 
