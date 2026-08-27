@@ -16,6 +16,11 @@
       ],
       "files": [
         {
+          "path": "packages/prism-glass/src/index.js",
+          "type": "registry:component",
+          "target": "components/prism-glass/index.js"
+        },
+        {
           "path": "packages/prism-glass/src/PrismGlass.jsx",
           "type": "registry:component",
           "target": "components/prism-glass/PrismGlass.jsx"
@@ -37,8 +42,16 @@
       "type": "registry:component",
       "title": "ASCII Field",
       "description": "A canvas field of glyphs that scramble around the cursor and settle back to rest.",
-      "dependencies": [],
+      "dependencies": [
+        "gsap",
+        "@gsap/react"
+      ],
       "files": [
+        {
+          "path": "src/components/AsciiField/index.js",
+          "type": "registry:component",
+          "target": "components/ascii-field/index.js"
+        },
         {
           "path": "src/components/AsciiField/AsciiField.jsx",
           "type": "registry:component",
