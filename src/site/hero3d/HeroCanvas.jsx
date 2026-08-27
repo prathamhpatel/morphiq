@@ -302,6 +302,22 @@ function Scene({ nodes }) {
     return () => window.removeEventListener('pointermove', onMove)
   }, [])
 
+  /* On a touch screen there is no pointer to follow, so the lens would sit
+     frozen wherever the last tap landed. The final pass still has to run —
+     it is what composites the scene to the screen — so the lens is switched
+     off through refraction, the shader's master gate, rather than removed. */
+  const [coarse, setCoarse] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(hover: none), (pointer: coarse)').matches
+  )
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: none), (pointer: coarse)')
+    const onChange = (e) => setCoarse(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
   const backdrop = useMemo(() => makeBackdropMaterial(), [])
   const cursorU = useMemo(makeUniforms, [])
   const navU = useMemo(makeUniforms, [])
@@ -437,10 +453,18 @@ function Scene({ nodes }) {
     cu.uPx.value = pxUnit
     cu.uShape.value = 0
     cu.uRadius.value = CURSOR_LENS.size / 100
-    cu.uUseMask.value = mask ? 1 : 0
+    cu.uUseMask.value = mask && !coarse ? 1 : 0
     cu.uMask.value = mask ? mask.texture : null
     cu.uMaskAspect.value = mask ? mask.aspect : 1
     apply(cu, CURSOR_LENS)
+    /* Refraction gates every displacement, dispersion and specular term, but
+       the rim light is deliberately independent of it — at refraction 0 the
+       lens still leaves a faint outline. Zero both to blit the stage plainly. */
+    if (coarse) {
+      cu.uRadius.value = 0
+      cu.uRefraction.value = 0
+      cu.uLightInt.value = 0
+    }
 
     /* The mask is centred on uCenter, but an arrow points from its top-left —
        shift the lens so the TIP lands on the real pointer. Measured against
