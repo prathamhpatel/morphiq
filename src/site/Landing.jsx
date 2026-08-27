@@ -230,17 +230,6 @@ export default function Landing({ onNavigate }) {
                     Explore Components
                   </span>
                 </button>
-
-                <button
-                  type="button"
-                  className="site-cta site-cta--ghost"
-                  data-gl="surface"
-                  onClick={() => go('glass')}
-                >
-                  <span className="site-cta__label" data-gl="text">
-                    Get Started
-                  </span>
-                </button>
               </div>
 
               <p className="site-hero__note" data-gl="text">
