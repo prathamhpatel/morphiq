@@ -167,5 +167,7 @@ commercial use.
 
 ## License
 
-MIT + Commons Clause — free for personal and commercial use. You may not sell
-Morphiq itself. See [LICENSE](./LICENSE).
+[MIT](./LICENSE) — use it, ship it, sell what you build with it.
+
+The Author typeface in `public/fonts/` carries its own licence from Fontshare and
+is not covered by the MIT grant.
