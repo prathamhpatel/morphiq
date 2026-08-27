@@ -86,6 +86,7 @@ function Content({ nodes, backdrop = null }) {
 
   const textRefs = useRef([])
   const surfRefs = useRef([])
+  const imgRefs = useRef([])
 
   const surfaceMats = useMemo(
     () =>
@@ -94,6 +95,36 @@ function Content({ nodes, backdrop = null }) {
       ),
     [nodes]
   )
+
+  /* Image nodes load asynchronously, so they arrive after the first frames.
+     Each plane stays hidden until its own texture is in. */
+  const [imageTex, setImageTex] = useState({})
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader()
+    let live = true
+    const loaded = []
+
+    nodes.forEach((n, i) => {
+      if (n.kind !== 'image' || !n.src) return
+      loader.load(n.src, (t) => {
+        if (!live) return t.dispose()
+        t.colorSpace = THREE.SRGBColorSpace
+        t.minFilter = THREE.LinearMipmapLinearFilter
+        t.magFilter = THREE.LinearFilter
+        t.generateMipmaps = true
+        t.anisotropy = 8
+        loaded.push(t)
+        setImageTex((m) => ({ ...m, [i]: t }))
+      })
+    })
+
+    return () => {
+      live = false
+      loaded.forEach((t) => t.dispose())
+      setImageTex({})
+    }
+  }, [nodes])
 
   useFrame(() => {
     const f = backdrop ? readFrame() : null
@@ -126,6 +157,19 @@ function Content({ nodes, backdrop = null }) {
             t.sync?.()
           }
         }
+      } else if (n.kind === 'image') {
+        const m = imgRefs.current[i]
+        if (!m) return
+        m.visible = !off && !!imageTex[i]
+        if (off) return
+        /* Same z as text so the mark sits with the wordmark it replaced,
+           above the page sections rather than behind them. */
+        m.position.set(
+          r.left + r.width / 2 - W / 2,
+          H / 2 - (r.top + r.height / 2),
+          n.top ? 0.6 : 0.03
+        )
+        m.scale.set(r.width, r.height, 1)
       } else {
         const m = surfRefs.current[i]
         if (!m) return
@@ -174,6 +218,15 @@ function Content({ nodes, backdrop = null }) {
           >
             {n.text}
           </Text>
+        ) : n.kind === 'image' ? (
+          <mesh key={i} ref={(el) => (imgRefs.current[i] = el)} visible={false}>
+            <planeGeometry />
+            <meshBasicMaterial
+              map={imageTex[i] || null}
+              transparent
+              toneMapped={false}
+            />
+          </mesh>
         ) : (
           <mesh key={i} ref={(el) => (surfRefs.current[i] = el)}>
             <planeGeometry />

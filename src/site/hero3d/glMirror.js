@@ -17,6 +17,7 @@ const FACES = {
  *
  *   data-gl="text"     -> troika Text at the element's box
  *   data-gl="surface"  -> rounded rect using its background + radius
+ *   data-gl="image"    -> textured plane filling its box, from data-gl-src
  *
  * Adding a section is then just markup plus an attribute. The DOM copy is
  * invisible (opacity: 0) but still fully interactive.
@@ -89,6 +90,16 @@ export function collectNodes(root = document) {
            re-read every frame. */
         live: el.hasAttribute('data-gl-live'),
         // the header floats over the page, so it has to draw over it too
+        top: el.hasAttribute('data-gl-top'),
+      })
+    } else if (kind === 'image') {
+      /* Deliberately NOT reading computed opacity: the DOM copy sits at
+         opacity 0 so the scene owns the pixels, so the element can never
+         report its intended value. */
+      out.push({
+        el,
+        kind,
+        src: el.getAttribute('data-gl-src') || el.getAttribute('src'),
         top: el.hasAttribute('data-gl-top'),
       })
     } else if (kind === 'surface') {
