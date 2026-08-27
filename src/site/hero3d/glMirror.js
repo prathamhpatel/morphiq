@@ -19,6 +19,10 @@ const FACES = {
  *   data-gl="surface"  -> rounded rect using its background + radius
  *   data-gl="image"    -> textured plane filling its box, from data-gl-src
  *
+ * A surface can fade with `data-gl-alpha="--some-prop"`, naming a custom
+ * property holding a plain number that the frame loop multiplies into its
+ * alpha.
+ *
  * Adding a section is then just markup plus an attribute. The DOM copy is
  * invisible (opacity: 0) but still fully interactive.
  */
@@ -111,6 +115,15 @@ export function collectNodes(root = document) {
         opacity: alpha,
         radius: num(cs.borderTopLeftRadius),
         top: el.hasAttribute('data-gl-top'),
+        /* A surface's alpha is read ONCE here, so anything that needs to fade
+           has to name a custom property the frame loop can re-read:
+
+             data-gl-alpha="--e-glass"
+
+           CSS `opacity` is not an option — `.site [data-gl] { opacity: 0 }`
+           pins every mirrored element to zero, so the computed value is always
+           0 and tells the scene nothing. */
+        alphaVar: el.getAttribute('data-gl-alpha'),
       })
     }
   }

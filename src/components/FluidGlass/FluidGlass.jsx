@@ -1,7 +1,7 @@
 import { useRef, useMemo, useState, Suspense } from 'react'
 import * as THREE from 'three'
 import { Canvas, useFrame, useThree, createPortal } from '@react-three/fiber'
-import { Text, Image } from '@react-three/drei'
+import { Image } from '@react-three/drei'
 import { easing } from 'maath'
 import {
   vertexShader,
@@ -9,6 +9,7 @@ import {
   makeGlassUniforms,
   applyGlassParams,
 } from '../Glass/glassShader.js'
+import morphiqBg from './morphiqbg.png'
 import './FluidGlass.css'
 
 /* =========================================================
@@ -18,7 +19,7 @@ import './FluidGlass.css'
    The "fluid glass" technique, reimplemented from scratch on the
    same MIT libraries ReactBits happens to use:
 
-     1. The content (headline + panels) is portaled into an
+     1. The content is portaled into an
         offscreen THREE.Scene and rendered into an FBO each frame.
      2. A fullscreen plane shows that buffer as the background.
      3. A glass lens mesh refracts the SAME buffer via drei's
@@ -27,59 +28,37 @@ import './FluidGlass.css'
      4. The lens eases toward the pointer with maath.
 
    The lens is procedural (a biconvex LatheGeometry — no .glb) and
-   the panels are canvas-generated gradients (no .webp), so nothing
-   here is copied.
+   the backdrop is our own artwork, so nothing here is copied.
    ========================================================= */
 
-// Real photos behind the glass. These are placeholder demo images pulled from
-// Lorem Picsum (fixed seeds → stable, deterministic photos). Swap the `url`s
-// for your own image files whenever you like — the layout stays the same.
-const photo = (seed) => `https://picsum.photos/seed/${seed}/900/1200`
-
-const PHOTOS = [
-  { seed: 'fluid-a', px: -0.3, py: 0.22, pz: -0.2, sw: 0.34, sh: 0.42 },
-  { seed: 'fluid-b', px: 0.31, py: 0.06, pz: -0.1, sw: 0.32, sh: 0.5 },
-  { seed: 'fluid-c', px: -0.24, py: -0.28, pz: -0.15, sw: 0.3, sh: 0.34 },
-  { seed: 'fluid-d', px: 0.22, py: -0.3, pz: -0.05, sw: 0.28, sh: 0.3 },
-]
+/* Intrinsic size of morphiqbg.png. Hardcoded rather than read off the
+   texture: the cover fit has to be right on the first frame, and the image
+   decodes asynchronously. */
+const BG_ASPECT = 1212 / 586
 
 // Everything that lives behind the glass.
 function Content() {
   const { width: W, height: H } = useThree((s) => s.viewport)
+
+  /* Cover fit — fill the frame on the constrained axis and let the other one
+     crop. Scaling to the viewport directly would stretch a 2.07:1 image to
+     whatever shape the panel happens to be. The 1.02 kills the hairline of
+     background that anti-aliasing leaves along the edges. */
+  const wide = W / H > BG_ASPECT
+  const w = (wide ? W : H * BG_ASPECT) * 1.02
+  const h = (wide ? W / BG_ASPECT : H) * 1.02
+
   return (
     <group>
-      {/* Full-bleed background photo: fills the whole frame so the lens
-          always has real content to refract, wherever the pointer moves. */}
-      <Image url={photo('fluid-bg')} position={[0, 0, -1]} scale={[W * 1.2, H * 1.2]} toneMapped={false} />
-      <mesh position={[0, 0, -0.9]}>
-        <planeGeometry args={[W * 1.2, H * 1.2]} />
-        <meshBasicMaterial color="#05060a" transparent opacity={0.35} toneMapped={false} />
-      </mesh>
-
-      {PHOTOS.map((p) => (
-        <Image
-          key={p.seed}
-          url={photo(p.seed)}
-          position={[W * p.px, H * p.py, p.pz]}
-          scale={[W * p.sw, H * p.sh]}
-          toneMapped={false}
-        />
-      ))}
-
-      <Text
-        position={[0, 0, 0.1]}
-        fontSize={H * 0.13}
-        letterSpacing={-0.04}
-        color="#ffffff"
-        anchorX="center"
-        anchorY="middle"
-        outlineWidth={0}
-        outlineBlur="18%"
-        outlineColor="#000"
-        outlineOpacity={0.35}
-      >
-        Fluid Glass
-      </Text>
+      {/* The artwork already carries the wordmark, so it is the whole scene:
+          no panel collage, no headline, and no darkening scrim over it. The
+          lens has real content to bend wherever the pointer goes. */}
+      <Image
+        url={morphiqBg}
+        position={[0, 0, -1]}
+        scale={[w, h]}
+        toneMapped={false}
+      />
     </group>
   )
 }

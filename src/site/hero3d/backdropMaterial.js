@@ -26,6 +26,7 @@ const fragmentShader = /* glsl */ `
   uniform float uRadius;    // card corner radius, px
   uniform float uBelow;     // y where the section stack starts, px
   uniform float uBelowH;    // its full height, px
+  uniform float uFooter;    // y where the footer starts, px
 
   vec3 heroGradient(float t) {
     vec3 a = vec3(9.0, 10.0, 12.0) / 255.0;
@@ -40,16 +41,14 @@ const fragmentShader = /* glsl */ `
   /* Below the hero the page swells blue and then settles back into the dark,
      so the whole site reads as one continuous surface and white type works
      the whole way down. */
+  /* The page below the hero holds ONE blue — the one the card's gradient ends
+     on, so the seam between them is invisible. It used to fall away to
+     near-black over the scroll, which meant every section sat on a different
+     ground and nothing could be styled to work on all of them. Only the
+     footer goes dark, and it does that from its own measured position rather
+     than a guessed fraction of the scroll. */
   vec3 canvasGradient(float t) {
-    vec3 a = vec3(8.0, 96.0, 254.0) / 255.0;
-    vec3 b = vec3(30.0, 86.0, 200.0) / 255.0;
-    vec3 c = vec3(10.0, 30.0, 74.0) / 255.0;
-    vec3 d = vec3(7.0, 12.0, 28.0) / 255.0;
-    vec3 e = vec3(5.0, 7.0, 15.0) / 255.0;
-    if (t < 0.10) return mix(a, b, t / 0.10);
-    if (t < 0.28) return mix(b, c, (t - 0.10) / 0.18);
-    if (t < 0.58) return mix(c, d, (t - 0.28) / 0.30);
-    return mix(d, e, clamp((t - 0.58) / 0.42, 0.0, 1.0));
+    return vec3(8.0, 96.0, 254.0) / 255.0;
   }
 
   // distance to a rounded box, negative inside
@@ -68,6 +67,12 @@ const fragmentShader = /* glsl */ `
     // edge lands exactly here, and blending it against white showed as a seam
     if (p.y >= uBelow - 2.0) {
       col = canvasGradient(clamp((p.y - uBelow) / max(1.0, uBelowH), 0.0, 1.0));
+
+      /* The footer's own ground: a solid block, not a fade. The 1px smoothstep
+         is antialiasing on the edge itself, not a gradient — the boundary has
+         to read as a hard line between two flat colours. */
+      vec3 footerCol = vec3(7.0, 18.0, 39.0) / 255.0;
+      col = mix(col, footerCol, smoothstep(uFooter - 1.0, uFooter + 1.0, p.y));
     }
 
     vec2 centre = vec2((uCard.x + uCard.z) * 0.5, (uCard.y + uCard.w) * 0.5);
@@ -93,6 +98,7 @@ export function makeBackdropMaterial() {
       uRadius: { value: 36 },
       uBelow: { value: 1e6 },
       uBelowH: { value: 4050 },
+      uFooter: { value: 1e6 },
     },
   })
 }

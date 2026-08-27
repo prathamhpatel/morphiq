@@ -68,8 +68,19 @@ item's files in their own folder:
 `registry:component` files as JavaScript; hand it a `.css` file and the install
 dies with `Unexpected token (1:0)` and silently skips the file.
 
-List runtime packages in `dependencies` (`"three"`, `"maath"`). List other
-registry items in `registryDependencies`.
+**Declare every package the component imports.** List runtime packages in
+`dependencies` (`"three"`, `"maath"`, `"gsap"`), and other registry items in
+`registryDependencies`. The CLI installs exactly what an entry declares and
+nothing more, so a missed package ships a component that cannot compile — and
+`shadcn add` still reports success, because writing the files is all it was
+asked to do. ASCII Field shipped this way: it imports `gsap` and `@gsap/react`
+and declared neither.
+
+Check the entry against the source rather than from memory:
+
+```bash
+grep -h "^import" <the component's files> | grep -v "\./"
+```
 
 Then rebuild and test the real install path:
 
@@ -99,8 +110,10 @@ Before you open one:
 - `npm run build` passes
 - the component renders correctly at its default props, with no console errors
 - the docs page and its Customize controls work
-- if you touched `registry.json`, you actually installed the item into a scratch
-  project and it compiled
+- if you touched `registry.json`, you installed the item into a scratch project
+  **and ran that project's build** — not just `shadcn add`. A successful add
+  only means files were written; the build is what proves the dependencies are
+  declared and the imports resolve
 - `public/r/` is rebuilt and committed alongside the `registry.json` change
 
 Describe what the component does and why it belongs in the kit. Screenshots or a
