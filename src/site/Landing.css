@@ -125,20 +125,25 @@
   z-index: 1;
 }
 
+/* The mark replaces the old text wordmark, so it rides the same curve the
+   type did: full size at rest, shrinking to the stuck size as the card opens.
+   Height drives it and width follows the 122:52 aspect. */
 .site-wordmark {
-  --size: clamp(30px, 3.75vw, 54px);
-  font-size: calc(
-    var(--size) + (min(var(--size), 30px) - var(--size)) * var(--expand)
-  );
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.01em;
-  color: #fff;
+  display: flex;
+  align-items: center;
   background: none;
   border: 0;
   padding: 0;
-  font-family: inherit;
   cursor: none;
+}
+
+.site-wordmark__mark {
+  --size: clamp(22px, 2.64vw, 38px);
+  height: calc(
+    var(--size) + (min(var(--size), 22px) - var(--size)) * var(--expand)
+  );
+  width: auto;
+  display: block;
 }
 
 /* node 435:439 — bare links; the only glass on the page is the header's */
