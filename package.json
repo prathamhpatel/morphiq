@@ -26,8 +26,8 @@
     "react-dom": "^19.2.8",
     "three": "^0.185.1"
   },
-  "license": "SEE LICENSE IN LICENSE",
-  "description": "Interactive React components \u2014 glass, motion and depth.",
+  "license": "MIT",
+  "description": "Interactive React components — glass, motion and depth.",
   "repository": {
     "type": "git",
     "url": "https://github.com/prathamhpatel/morphiq.git"
