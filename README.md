@@ -143,21 +143,16 @@ npm run dev
 No configuration needed. The landing page is at `/`; the component docs sit
 behind **Components** in the nav.
 
-To add a component:
-
-1. Drop it in `src/components/<Name>/`, fully controlled — every setting a
-   prop with a default, no internal panel.
-2. Add it to `SIDEBAR` and `PAGES` in `src/site/components/ComponentsPage.jsx`
-   so it gets a docs page and Customize controls.
-3. Declare it in `registry.json` so the CLI can serve it.
-
 ```
-packages/prism-glass/   the published component
-src/components/         the component sources
+packages/prism-glass/   the published npm package
+src/components/         component sources
 src/site/               the WebGL landing page
 src/site/components/    the docs site
 registry.json           shadcn registry manifest
 ```
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to add a component, how to
+write a registry entry that actually installs, and what a pull request needs.
 
 ## Typeface
 
