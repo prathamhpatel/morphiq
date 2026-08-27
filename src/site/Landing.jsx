@@ -153,7 +153,6 @@ export default function Landing({ onNavigate }) {
           type="button"
           className="site-wordmark"
           onClick={() => window.scrollTo({ top: 0 })}
-          aria-label="Morphiq — back to top"
         >
           <img
             className="site-wordmark__mark"
@@ -163,6 +162,14 @@ export default function Landing({ onNavigate }) {
             data-gl-src="/logo.svg"
             data-gl-top
           />
+          <span
+            className="site-wordmark__text"
+            data-gl="text"
+            data-gl-live
+            data-gl-top
+          >
+            Morphiq
+          </span>
         </button>
 
         <nav className="site-nav">
