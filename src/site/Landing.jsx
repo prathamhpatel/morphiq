@@ -42,7 +42,7 @@ const NAV = [
   { label: 'Templates', view: null },
   { label: 'Docs', view: 'docs' },
   { label: 'Playground', view: 'glass' },
-  { label: 'GitHub', href: 'https://github.com' },
+  { label: 'GitHub', href: 'https://github.com/prathamhpatel/morphiq' },
 ]
 
 /* The real roster. `ready` marks what the registry serves today — two of six —
@@ -467,7 +467,7 @@ export default function Landing({ onNavigate }) {
           <a
             className="sx__link"
             data-gl="text"
-            href="https://github.com"
+            href="https://github.com/prathamhpatel/morphiq"
             target="_blank"
             rel="noreferrer"
           >
