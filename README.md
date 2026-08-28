@@ -163,4 +163,4 @@ commercial use.
 [MIT](./LICENSE) — use it, ship it, sell what you build with it.
 
 The Author typeface in `public/fonts/` carries its own licence from Fontshare and
-is not covered by the MIT grant.
+is not covered by the MIT grant — see [NOTICE](./NOTICE).
