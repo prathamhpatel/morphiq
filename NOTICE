@@ -1,0 +1,13 @@
+Morphiq — third-party notices
+
+The Morphiq source in this repository is MIT licensed. See LICENSE.
+
+The following bundled assets are NOT covered by that grant and carry their own
+terms:
+
+Author typeface — public/fonts/Author-*.otf
+  Designed by Satya Rajpurohit, Indian Type Foundry. Obtained from Fontshare
+  (https://fontshare.com/fonts/author). Free for personal and commercial use,
+  including web embedding. Per the Fontshare licence these files may not be
+  resold, redistributed or renamed as a standalone product. See
+  public/fonts/README.md.
