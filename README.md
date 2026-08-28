@@ -23,13 +23,13 @@ npx shadcn@latest add prathamhpatel/morphiq/prism-glass
 npx shadcn@latest add prathamhpatel/morphiq/ascii-field
 ```
 
-**2. Register the `@morph` namespace once**, then install by short name:
+**2. Register the `@morphiq` namespace once**, then install by short name:
 
 ```bash
-npx shadcn@latest registry add "@morph=https://morphiq.prathampatel.design/r/{name}.json"
+npx shadcn@latest registry add "@morphiq=https://morphiq.prathampatel.design/r/{name}.json"
 
-npx shadcn@latest add @morph/prism-glass
-npx shadcn@latest add @morph/ascii-field
+npx shadcn@latest add @morphiq/prism-glass
+npx shadcn@latest add @morphiq/ascii-field
 ```
 
 `registry add` writes the namespace into your `components.json` for you. If you
@@ -38,7 +38,7 @@ would rather do it by hand:
 ```json
 {
   "registries": {
-    "@morph": "https://morphiq.prathampatel.design/r/{name}.json"
+    "@morphiq": "https://morphiq.prathampatel.design/r/{name}.json"
   }
 }
 ```
@@ -52,8 +52,8 @@ npx shadcn@latest add https://morphiq.prathampatel.design/r/prism-glass.json
 Browse what is in the registry before you install anything:
 
 ```bash
-npx shadcn@latest list @morph
-npx shadcn@latest view @morph/prism-glass
+npx shadcn@latest list @morphiq
+npx shadcn@latest view @morphiq/prism-glass
 ```
 
 ### Requirements

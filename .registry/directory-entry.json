@@ -1,5 +1,5 @@
 {
-  "name": "@morph",
+  "name": "@morphiq",
   "homepage": "https://morphiq.prathampatel.design",
   "url": "https://morphiq.prathampatel.design/r/{name}.json",
   "description": "Interfaces that move. Refractive glass, motion and depth for React — a GPU-accelerated prism lens and a cursor-reactive ASCII field, with every setting exposed as a prop.",

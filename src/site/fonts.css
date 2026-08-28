@@ -8,6 +8,6 @@
 @font-face { font-family: 'Author'; src: url('/fonts/Author-Semibold.otf')   format('opentype'); font-weight: 600; font-display: swap; }
 
 :root {
-  --morph-font: 'Author', 'Product Sans', 'Inter', -apple-system,
+  --morphiq-font: 'Author', 'Product Sans', 'Inter', -apple-system,
     BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }

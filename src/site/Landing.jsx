@@ -431,7 +431,7 @@ export default function Landing({ onNavigate }) {
 
           <div className="sx__install" data-gl="surface">
             <code className="sx__code" data-gl="text">
-              npx shadcn@latest add @morph/prism-glass
+              npx shadcn@latest add @morphiq/prism-glass
             </code>
           </div>
 

@@ -133,13 +133,13 @@ const DOC_PAGES = {
       { kind: 'p', text: 'Do this once and every component is a short name from then on. The CLI writes the entry into your components.json for you.' },
       {
         kind: 'code',
-        text: 'npx shadcn@latest registry add "@morph=https://morphiq.prathampatel.design/r/{name}.json"\n\nnpx shadcn@latest add @morph/prism-glass\nnpx shadcn@latest add @morph/ascii-field',
+        text: 'npx shadcn@latest registry add "@morphiq=https://morphiq.prathampatel.design/r/{name}.json"\n\nnpx shadcn@latest add @morphiq/prism-glass\nnpx shadcn@latest add @morphiq/ascii-field',
         pm: true,
       },
       { kind: 'p', text: 'Or add it by hand:' },
       {
         kind: 'code',
-        text: '{\n  "registries": {\n    "@morph": "https://morphiq.prathampatel.design/r/{name}.json"\n  }\n}',
+        text: '{\n  "registries": {\n    "@morphiq": "https://morphiq.prathampatel.design/r/{name}.json"\n  }\n}',
         label: 'components.json',
       },
 
@@ -154,7 +154,7 @@ const DOC_PAGES = {
       { kind: 'h', text: 'Look before you install' },
       {
         kind: 'code',
-        text: 'npx shadcn@latest list @morph\nnpx shadcn@latest view @morph/prism-glass',
+        text: 'npx shadcn@latest list @morphiq\nnpx shadcn@latest view @morphiq/prism-glass',
         pm: true,
       },
 
@@ -252,7 +252,7 @@ const PAGES = {
   'ASCII Field': {
     title: 'ASCII Field',
     blurb: 'A canvas of glyphs that scramble around the cursor and settle back to rest — a sprite atlas, a loop and a GSAP timeline.',
-    install: 'npx shadcn@latest add @morph/ascii-field',
+    install: 'npx shadcn@latest add @morphiq/ascii-field',
     usage: `import AsciiField from '@/components/ascii-field'
 
 <AsciiField
@@ -308,7 +308,7 @@ const PAGES = {
   'Prism Glass': {
     title: 'Prism Glass',
     blurb: 'A GPU refractive lens — spectral dispersion, uniform frost and a directional rim light, from an SDF-defined shape with no 3D model involved. It refracts the texture you hand it, not the DOM behind it.',
-    install: 'npx shadcn@latest add @morph/prism-glass',
+    install: 'npx shadcn@latest add @morphiq/prism-glass',
     usage: `import PrismGlass from '@/components/prism-glass'
 
 <PrismGlass
