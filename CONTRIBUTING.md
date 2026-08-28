@@ -48,7 +48,7 @@ read the next section before you write the entry.
 
 ## Registry entries
 
-The registry is what makes `npx shadcn@latest add @morph/<name>` work. Two rules
+The registry is what makes `npx shadcn@latest add @morphiq/<name>` work. Two rules
 matter more than the rest, both learned the hard way:
 
 **Give every file an explicit `target`.** Without one, the CLI routes files by
