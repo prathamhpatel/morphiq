@@ -1,0 +1,324 @@
+@import './fonts.css';
+
+/*
+ * Site tokens.
+ *
+ * Two values are set on the root element at runtime — the ground and the ink,
+ * drawn at random once per page load. Everything else is derived from them, so
+ * all fifteen palettes stay coherent without a table of exceptions. --mq-rule
+ * is what #7BB3C4 is to the original Figma blue.
+ *
+ * Measurements are the raw numbers off the 1633px Figma frame multiplied by
+ * --mq-s, which holds the drawn proportions at any viewport width.
+ */
+:root {
+  --mq-bg: #b3eafa;
+  --mq-ink: #1f3347;
+  --mq-rule: color-mix(in srgb, var(--mq-ink) 34%, var(--mq-bg));
+  /* 80% is the floor at which every one of the thirty renderings — fifteen
+     pairs, light and dark — clears WCAG AA 4.5:1 for normal text. Secondary
+     copy and non-current nav links share it: a separate, dimmer token for nav
+     failed AA on all thirty, so the current page is marked by weight as well
+     as by full ink rather than by everything else receding further. */
+  --mq-soft: color-mix(in srgb, var(--mq-ink) 80%, var(--mq-bg));
+  --mq-wash: color-mix(in srgb, var(--mq-ink) 7%, var(--mq-bg));
+
+  --mq-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
+
+  /* The frame's rendered width, and the offset that centres it.
+     Below 1800px --mq-x is exactly 0 and this behaves as it always did; above
+     it the whole drawing holds its proportions and centres, instead of the
+     rules stretching to the viewport while the content stayed at 1800 scale
+     and drifted away from them. */
+  --mq-w: min(100vw, 1800px);
+  --mq-x: calc((100vw - var(--mq-w)) / 2);
+  --mq-s: calc(var(--mq-w) / 1633);
+
+  /* Rule positions, measured off the frame rather than the viewport. */
+  --mq-gutter: calc(var(--mq-x) + 112 * var(--mq-s));
+  --mq-mid: calc(var(--mq-x) + 814.44 * var(--mq-s));
+  --mq-right: calc(var(--mq-x) + 1521 * var(--mq-s));
+
+  --mq-inset: calc(var(--mq-x) + 160 * var(--mq-s));
+}
+
+/* Shared page base. Both the home page and the docs carry this class. */
+.mq {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--mq-bg);
+  color: var(--mq-ink);
+  font-family: var(--morphiq-font);
+  -webkit-font-smoothing: antialiased;
+}
+
+.mq *,
+.mq *::before,
+.mq *::after {
+  box-sizing: border-box;
+}
+
+.mq :focus-visible {
+  outline: 2px solid var(--mq-ink);
+  outline-offset: 3px;
+}
+
+/* The exported SVGs carry the original navy/blue fills, which would survive a
+   palette change. Drawing them as masks throws the artwork's colour away and
+   keeps only its alpha, so the ink comes from the pair like everything else. */
+.mq-mark,
+.mq-icon {
+  display: block;
+  flex: none;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.mq-mark {
+  width: calc(35.45 * var(--mq-s));
+  height: calc(15 * var(--mq-s));
+  background: var(--mq-ink);
+  -webkit-mask-image: url('/figma-hero/wordmark.svg');
+  mask-image: url('/figma-hero/wordmark.svg');
+}
+
+/* Icons sit on ink-filled buttons, so they take the ground colour. */
+.mq-icon {
+  background: var(--mq-bg);
+}
+.mq-icon--github {
+  width: calc(13.213 * var(--mq-s));
+  height: calc(13.213 * var(--mq-s));
+  -webkit-mask-image: url('/figma-hero/github.svg');
+  mask-image: url('/figma-hero/github.svg');
+}
+.mq-icon--arrow {
+  width: calc(15.934 * var(--mq-s));
+  height: calc(15.934 * var(--mq-s));
+  -webkit-mask-image: url('/figma-hero/arrow-right.svg');
+  mask-image: url('/figma-hero/arrow-right.svg');
+}
+.mq-icon--search {
+  width: calc(15 * var(--mq-s));
+  height: calc(15 * var(--mq-s));
+  background: var(--mq-soft);
+  -webkit-mask-image: url('/figma-hero/search.svg');
+  mask-image: url('/figma-hero/search.svg');
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mq * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ---------- theme picker ---------- */
+
+/* Chrome, not composition: sized in fixed px so it stays tappable at any
+   viewport rather than scaling with the 1633 frame like the page does. */
+.tp {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  font-family: var(--morphiq-font);
+}
+
+.tp__trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 8px 10px;
+  border: 1px solid var(--mq-rule);
+  border-radius: 999px;
+  background: var(--mq-bg);
+  color: var(--mq-ink);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.14s ease;
+}
+.tp__trigger:hover { border-color: var(--mq-ink); }
+
+/* The current pair, split on the diagonal. */
+.tp__chip {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--mq-bg) 0 50%,
+    var(--mq-ink) 50% 100%
+  );
+  box-shadow: inset 0 0 0 1px var(--mq-rule);
+}
+
+.tp__panel {
+  width: 232px;
+  padding: 14px;
+  border: 1px solid var(--mq-rule);
+  border-radius: 10px;
+  background: var(--mq-bg);
+  color: var(--mq-ink);
+}
+
+.tp__label {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mq-soft);
+}
+
+.tp__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tp__swatch {
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--a) 0 50%, var(--b) 50% 100%);
+  box-shadow: inset 0 0 0 1px var(--mq-rule);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.tp__swatch:hover { transform: scale(1.08); }
+.tp__swatch.is-active {
+  box-shadow: 0 0 0 2px var(--mq-bg), 0 0 0 4px var(--mq-ink);
+}
+
+.tp__modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 3px;
+  margin-bottom: 14px;
+  border: 1px solid var(--mq-rule);
+  border-radius: 7px;
+}
+
+.tp__mode {
+  padding: 7px 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--mq-soft);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.14s ease, color 0.14s ease;
+}
+.tp__mode:hover { color: var(--mq-ink); }
+.tp__mode.is-active {
+  background: var(--mq-ink);
+  color: var(--mq-bg);
+}
+
+.tp__shuffle {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mq-soft);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.14s ease;
+}
+.tp__shuffle:hover { color: var(--mq-ink); }
+
+@media (max-width: 640px) {
+  .tp { right: 12px; bottom: 12px; }
+  .tp__panel { width: 208px; }
+}
+
+/* ---------- narrow-viewport nav ---------- */
+
+/* Hidden until the inline links are dropped, so the two are never both up. */
+.mnav__trigger {
+  display: none;
+  position: absolute;
+  right: var(--mq-inset);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 6;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--mq-rule);
+  border-radius: 4px;
+  background: var(--mq-bg);
+  cursor: pointer;
+}
+.mnav__trigger span {
+  position: absolute;
+  left: 50%;
+  width: 15px;
+  height: 1px;
+  background: var(--mq-ink);
+  transition: transform 0.18s ease;
+}
+.mnav__trigger span:first-child { transform: translate(-50%, -4px); }
+.mnav__trigger span:last-child { transform: translate(-50%, 3px); }
+.mnav__trigger.is-open span:first-child {
+  transform: translate(-50%, 0) rotate(45deg);
+}
+.mnav__trigger.is-open span:last-child {
+  transform: translate(-50%, 0) rotate(-45deg);
+}
+
+.mnav__sheet {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 6;
+  flex-direction: column;
+  align-items: stretch;
+  border-bottom: 1px solid var(--mq-rule);
+  background: var(--mq-bg);
+}
+
+.mnav__link {
+  padding: 16px var(--mq-inset);
+  border: 0;
+  border-top: 1px solid var(--mq-rule);
+  background: none;
+  color: var(--mq-soft);
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: left;
+  cursor: pointer;
+}
+.mnav__link.is-active { color: var(--mq-ink); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .mnav__trigger,
+  .mnav__sheet { display: flex; }
+  .mnav__trigger { align-items: center; justify-content: center; }
+}
