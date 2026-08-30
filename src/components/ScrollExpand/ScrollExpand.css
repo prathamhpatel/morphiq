@@ -26,14 +26,20 @@
 
   position: relative;
   display: block;
-  /* one viewport to sit in, plus the scroll budget for the open and the hold */
-  height: calc((1 + var(--sx-travel) + var(--sx-hold)) * 100svh);
+  /* One stage to sit in, plus the scroll budget for the open and the hold.
+
+     The stage is a viewport by default, which is what this is for. But the
+     scroll maths already works against whatever element owns the scroll, so
+     the geometry should too: set --sx-vh on an ancestor and the component
+     pins to that box instead — which is how it can live inside a preview
+     panel rather than only at full bleed. */
+  height: calc((1 + var(--sx-travel) + var(--sx-hold)) * var(--sx-vh, 100svh));
 }
 
 .scroll-expand__pin {
   position: sticky;
   top: 0;
-  height: 100svh;
+  height: var(--sx-vh, 100svh);
   overflow: hidden;
 }
 

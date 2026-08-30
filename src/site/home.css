@@ -1,0 +1,626 @@
+@import './theme.css';
+
+/*
+ * The Figma "Desktop - 21" frame (node 492:43), extended into a full page.
+ *
+ * Every measurement is the raw Figma number multiplied by --mq-s, which keeps
+ * the proportions exactly as drawn instead of re-guessing a responsive layout.
+ * Below the hero, each section is a band in the same rule grid and splits on
+ * the middle rule: statement left, evidence right — the composition the hero
+ * establishes with the headline and the dither.
+ */
+.fh {
+  /* Content insets, in design px, measured off the hero. The right column
+     starts where the stats start and ends where they end. */
+  --fh-inset-r: calc(52.16 * var(--mq-s));
+  --fh-inset-end: calc(201.4 * var(--mq-s));
+  --fh-band-y: calc(112 * var(--mq-s));
+
+  /* Fixed rows, in design px. The hero takes the rest of the first screen, so
+     the lede/stats row always lands on the bottom edge. */
+  --fh-nav-h: calc(72 * var(--mq-s));
+  --fh-meta-h: calc(193.5 * var(--mq-s));
+
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ---------- the rules ---------- */
+
+.fh__ledger {
+  position: relative;
+}
+
+.fh__rules {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.fh__v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--mq-rule);
+}
+.fh__v--a { left: var(--mq-gutter); }
+.fh__v--b { left: var(--mq-mid); top: var(--fh-nav-h); }
+.fh__v--c { left: var(--mq-right); }
+
+/* ---------- first screen ---------- */
+
+.fh__screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ---------- nav ---------- */
+
+.fh__nav {
+  position: relative;
+  z-index: 3;
+  flex: none;
+  height: var(--fh-nav-h);
+  border-bottom: 1px solid var(--mq-rule);
+}
+
+.fh__wordmark {
+  position: absolute;
+  left: var(--mq-inset);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: calc(6 * var(--mq-s));
+  font-size: calc(20 * var(--mq-s));
+  font-weight: 500;
+  line-height: 1;
+}
+
+.fh__links {
+  position: absolute;
+  left: calc(353.6 * var(--mq-s));
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: calc(32 * var(--mq-s));
+}
+.fh__links button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: calc(16 * var(--mq-s));
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fh__github {
+  position: absolute;
+  left: calc(1370.7 * var(--mq-s));
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(5.745 * var(--mq-s));
+  padding: calc(8 * var(--mq-s)) calc(16 * var(--mq-s));
+  border-radius: calc(4 * var(--mq-s));
+  background: var(--mq-ink);
+  color: var(--mq-bg);
+  font-size: calc(16 * var(--mq-s));
+  font-weight: 500;
+  line-height: 0.88;
+  text-decoration: none;
+}
+
+/* ---------- hero ---------- */
+
+.fh__hero {
+  position: relative;
+  flex: 1;
+  min-height: calc(513.8 * var(--mq-s));
+}
+
+.fh__lockup {
+  position: absolute;
+  left: var(--mq-inset);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(28 * var(--mq-s));
+  z-index: 3;
+}
+
+.fh__title {
+  margin: 0;
+  font-size: calc(80 * var(--mq-s));
+  font-weight: 500;
+  line-height: calc(72 * var(--mq-s));
+  white-space: nowrap;
+}
+
+.fh__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(6.639 * var(--mq-s));
+  height: calc(51 * var(--mq-s));
+  padding: 0 calc(28 * var(--mq-s));
+  border: 0;
+  border-radius: calc(8 * var(--mq-s));
+  background: var(--mq-ink);
+  color: var(--mq-bg);
+  font-family: inherit;
+  font-size: calc(20 * var(--mq-s));
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* The cell right of the lockup. Inset a pixel so the rules stay the topmost
+   hairline over the canvas. */
+.fh__dither {
+  position: absolute;
+  left: calc(var(--mq-mid) + 1px);
+  right: calc(100% - var(--mq-right));
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+/* ---------- lede + stats ---------- */
+
+.fh__meta {
+  position: relative;
+  flex: none;
+  height: var(--fh-meta-h);
+  border-top: 1px solid var(--mq-rule);
+}
+
+.fh__lede {
+  position: absolute;
+  left: var(--mq-inset);
+  top: calc(51.4 * var(--mq-s));
+  margin: 0;
+  width: calc(485 * var(--mq-s));
+  font-size: calc(24 * var(--mq-s));
+  font-weight: 400;
+  line-height: calc(36 * var(--mq-s));
+}
+
+.fh__stats {
+  position: absolute;
+  left: calc(866.6 * var(--mq-s));
+  top: calc(51.4 * var(--mq-s));
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: calc(565 * var(--mq-s));
+  font-weight: 500;
+}
+
+.fh__stat {
+  display: flex;
+  flex-direction: column;
+  gap: calc(32 * var(--mq-s));
+}
+.fh__stat dt {
+  font-size: calc(20 * var(--mq-s));
+  letter-spacing: calc(-0.04 * var(--mq-s));
+  line-height: 1;
+}
+.fh__stat dd {
+  margin: 0;
+  font-size: calc(48 * var(--mq-s));
+  line-height: calc(64 * var(--mq-s));
+}
+
+/* ---------- bands ---------- */
+
+.fh__band {
+  position: relative;
+  padding: var(--fh-band-y) 0;
+  border-top: 1px solid var(--mq-rule);
+}
+
+/* The split lands exactly on the middle rule, so the rule reads as the
+   column divider it already is rather than as a decoration behind text. */
+.fh__split {
+  display: grid;
+  grid-template-columns: var(--mq-mid) 1fr;
+}
+.fh__split > :first-child {
+  padding-left: var(--mq-inset);
+  padding-right: calc(64 * var(--mq-s));
+}
+.fh__split > :last-child {
+  padding-left: var(--fh-inset-r);
+  padding-right: var(--fh-inset-end);
+}
+
+.fh__head {
+  display: flex;
+  flex-direction: column;
+  gap: calc(24 * var(--mq-s));
+}
+
+.fh__eyebrow {
+  margin: 0;
+  font-size: calc(16 * var(--mq-s));
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mq-soft);
+}
+
+.fh__h2 {
+  margin: 0;
+  font-size: calc(48 * var(--mq-s));
+  font-weight: 500;
+  line-height: calc(52 * var(--mq-s));
+  text-wrap: balance;
+}
+.fh__h2--big {
+  font-size: calc(80 * var(--mq-s));
+  line-height: calc(80 * var(--mq-s));
+}
+
+.fh__lead {
+  margin: 0 0 calc(20 * var(--mq-s));
+  font-size: calc(28 * var(--mq-s));
+  font-weight: 500;
+  line-height: calc(38 * var(--mq-s));
+}
+
+.fh__body {
+  margin: 0;
+  font-size: calc(20 * var(--mq-s));
+  font-weight: 400;
+  line-height: calc(32 * var(--mq-s));
+  color: var(--mq-soft);
+}
+
+.fh__link {
+  display: inline-block;
+  margin-top: calc(36 * var(--mq-s));
+  padding: 0 0 calc(4 * var(--mq-s));
+  border: 0;
+  border-bottom: 1px solid var(--mq-rule);
+  background: none;
+  color: var(--mq-ink);
+  font-family: inherit;
+  font-size: calc(20 * var(--mq-s));
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.fh__link:hover {
+  border-bottom-color: var(--mq-ink);
+}
+
+/* ---------- the index ---------- */
+
+/* A registry is a lookup table, so the roster is set as one. The install line
+   under each note is the status: a component with no slug is on the site but
+   not in the registry yet. */
+.fh__index {
+  margin: var(--fh-band-y) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--mq-rule);
+}
+
+.fh__row {
+  align-items: baseline;
+  padding: calc(36 * var(--mq-s)) 0;
+  border-bottom: 1px solid var(--mq-rule);
+  transition: background-color 0.14s ease, color 0.14s ease;
+}
+.fh__row:hover {
+  background: var(--mq-ink);
+  color: var(--mq-bg);
+}
+.fh__row:hover .fh__row-note,
+.fh__row:hover .fh__row-slug {
+  color: var(--mq-bg);
+}
+
+.fh__row-name {
+  margin: 0;
+  font-size: calc(32 * var(--mq-s));
+  font-weight: 500;
+  line-height: calc(36 * var(--mq-s));
+}
+
+.fh__row-body {
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--mq-s));
+}
+
+.fh__row-note {
+  margin: 0;
+  font-size: calc(18 * var(--mq-s));
+  line-height: calc(28 * var(--mq-s));
+  color: var(--mq-soft);
+}
+
+.fh__row-slug {
+  margin: 0;
+  font-family: var(--mq-mono);
+  font-size: calc(15 * var(--mq-s));
+  line-height: 1;
+  color: var(--mq-soft);
+}
+
+/* ---------- principles ---------- */
+
+.fh__principles {
+  margin: calc(40 * var(--mq-s)) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--mq-rule);
+}
+.fh__principles li {
+  padding: calc(16 * var(--mq-s)) 0;
+  border-bottom: 1px solid var(--mq-rule);
+  font-size: calc(20 * var(--mq-s));
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* ---------- install ---------- */
+
+.fh__install {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(24 * var(--mq-s));
+  padding: calc(18 * var(--mq-s)) calc(20 * var(--mq-s));
+  border-radius: calc(8 * var(--mq-s));
+  background: var(--mq-ink);
+  color: var(--mq-bg);
+}
+
+.fh__command {
+  font-family: var(--mq-mono);
+  font-size: calc(17 * var(--mq-s));
+  line-height: 1;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.fh__copy {
+  flex: none;
+  padding: calc(6 * var(--mq-s)) calc(12 * var(--mq-s));
+  border: 1px solid color-mix(in srgb, var(--mq-bg) 45%, transparent);
+  border-radius: calc(4 * var(--mq-s));
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: calc(15 * var(--mq-s));
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+.fh__copy:hover {
+  background: color-mix(in srgb, var(--mq-bg) 16%, transparent);
+}
+
+.fh__chips {
+  margin: calc(28 * var(--mq-s)) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(10 * var(--mq-s));
+  list-style: none;
+}
+.fh__chips li {
+  padding: calc(9 * var(--mq-s)) calc(16 * var(--mq-s));
+  border: 1px solid var(--mq-rule);
+  border-radius: calc(4 * var(--mq-s));
+  font-size: calc(16 * var(--mq-s));
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* ---------- closer ---------- */
+
+/* The hero composition, restated once: statement left, dither right. It is
+   the same signature rather than a second one. */
+.fh__band--end {
+  position: relative;
+  height: calc(520 * var(--mq-s));
+  padding: 0;
+}
+
+.fh__lockup--end {
+  gap: calc(24 * var(--mq-s));
+  max-width: calc(590 * var(--mq-s));
+}
+
+.fh__dither--end {
+  top: calc(80 * var(--mq-s));
+  bottom: calc(80 * var(--mq-s));
+}
+
+/* ---------- footer ---------- */
+
+.fh__footer {
+  padding: var(--fh-band-y) 0 calc(48 * var(--mq-s));
+  border-top: 1px solid var(--mq-rule);
+}
+
+.fh__brand {
+  display: flex;
+  flex-direction: column;
+  gap: calc(20 * var(--mq-s));
+}
+
+.fh__wordmark--footer {
+  position: static;
+  transform: none;
+}
+
+.fh__cols {
+  display: flex;
+  justify-content: space-between;
+  gap: calc(32 * var(--mq-s));
+}
+
+.fh__col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(14 * var(--mq-s));
+}
+.fh__col .fh__eyebrow {
+  margin-bottom: calc(6 * var(--mq-s));
+}
+.fh__col a,
+.fh__col button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mq-soft);
+  font-family: inherit;
+  font-size: calc(17 * var(--mq-s));
+  font-weight: 400;
+  line-height: 1;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.14s ease;
+}
+.fh__col a:hover,
+.fh__col button:hover {
+  color: var(--mq-ink);
+}
+
+/* The baseline: notice left, byline right, on the same rule the ledger ends
+   on. Both sit inside the outer gutters like every other row. */
+.fh__baseline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: calc(24 * var(--mq-s));
+  margin-top: var(--fh-band-y);
+  padding: calc(28 * var(--mq-s)) var(--mq-inset) 0;
+  border-top: 1px solid var(--mq-rule);
+  font-size: calc(16 * var(--mq-s));
+  color: var(--mq-soft);
+}
+.fh__baseline p {
+  margin: 0;
+}
+.fh__baseline a {
+  color: var(--mq-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--mq-rule);
+  transition: border-color 0.14s ease;
+}
+.fh__baseline a:hover {
+  border-bottom-color: var(--mq-ink);
+}
+
+/* ---------- narrow ---------- */
+
+/* Below the middle rule's useful width the two-column ledger stops being a
+   ledger. The outer rules stay — they are the frame — and everything folds
+   into one column at a scale set by the viewport rather than the 1633 frame. */
+@media (max-width: 900px) {
+  .fh {
+    --mq-s: calc(100vw / 640);
+    --mq-inset: calc(28 * var(--mq-s));
+    --fh-inset-r: calc(28 * var(--mq-s));
+    --fh-inset-end: calc(28 * var(--mq-s));
+    --mq-gutter: calc(14 * var(--mq-s));
+    --mq-right: calc(100% - 14 * var(--mq-s));
+    --fh-nav-h: calc(84 * var(--mq-s));
+    --fh-meta-h: auto;
+  }
+
+  .fh__v--b { display: none; }
+
+  .fh__links { display: none; }
+  .fh__github { left: auto; right: var(--mq-inset); }
+
+  .fh__screen { height: auto; }
+
+  .fh__hero {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .fh__lockup {
+    position: static;
+    transform: none;
+    padding: calc(56 * var(--mq-s)) var(--mq-inset);
+  }
+  .fh__title {
+    font-size: calc(64 * var(--mq-s));
+    line-height: calc(62 * var(--mq-s));
+    white-space: normal;
+  }
+  .fh__dither {
+    position: static;
+    height: calc(380 * var(--mq-s));
+  }
+
+  .fh__meta {
+    height: auto;
+    padding: calc(48 * var(--mq-s)) var(--mq-inset);
+  }
+  .fh__lede,
+  .fh__stats {
+    position: static;
+    width: auto;
+  }
+  .fh__stats {
+    margin-top: calc(48 * var(--mq-s));
+    flex-wrap: wrap;
+    gap: calc(40 * var(--mq-s));
+  }
+  .fh__stat { gap: calc(16 * var(--mq-s)); }
+
+  .fh__split {
+    grid-template-columns: 1fr;
+    row-gap: calc(36 * var(--mq-s));
+  }
+  .fh__split > :first-child,
+  .fh__split > :last-child {
+    padding-left: var(--mq-inset);
+    padding-right: var(--mq-inset);
+  }
+
+  .fh__row { row-gap: calc(16 * var(--mq-s)); }
+
+  .fh__band--end {
+    height: auto;
+    padding: var(--fh-band-y) 0;
+  }
+  .fh__dither--end {
+    top: auto;
+    bottom: auto;
+    margin-top: calc(48 * var(--mq-s));
+  }
+
+  .fh__cols { flex-direction: column; gap: calc(40 * var(--mq-s)); }
+
+  .fh__baseline {
+    flex-direction: column;
+    gap: calc(10 * var(--mq-s));
+  }
+}
+

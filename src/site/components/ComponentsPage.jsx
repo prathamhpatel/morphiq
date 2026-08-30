@@ -1,5 +1,6 @@
 import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Dock from '../../components/Dock/Dock.jsx'
+import { BG, INK, applyTheme } from '../theme.js'
 
 /* The other components are shown exactly as the lab shows them — same
    modules, same props, same built-in control panels. Nothing about their
@@ -10,14 +11,54 @@ const ScrollExpandDemo = lazy(() => import('../../demos/ScrollExpandDemo.jsx'))
 const PrismGlass = lazy(() =>
   import('@morphiq/prism-glass').then((m) => ({ default: m.PrismGlass }))
 )
-import searchIcon from './icons/search.svg'
-import githubIcon from './icons/github.svg'
 /* The Prism Glass preview refracts our own artwork rather than a stock photo
    — the lens breaking across the wordmark reads as the component arguing for
-   itself. Same file FluidGlass uses; one copy, not two. */
-import backdrop from '../../components/FluidGlass/morphiqbg.png'
-import cursorMask from '../../components/FluidGlass/cursor.svg'
+   itself. The bench uses the same two files; one copy, not two. */
+import backdrop from '../../components/PrismGlass/morphiqbg.png'
+import cursorMask from '../../components/PrismGlass/cursor.svg'
+import registryManifest from '../../../registry.json'
 import './ComponentsPage.css'
+
+/* ------------------------------------------------------------ real source ---
+
+   The Code tab shows the component's actual files, read straight off disk at
+   build time, and its dependencies come from the registry manifest — the same
+   file the shadcn CLI installs from. Nothing here is a copy that can drift
+   from what someone actually gets when they run `add`.
+
+   Loaded lazily: these are whole source files, and most visits never open the
+   Code tab. */
+const RAW = {
+  ...import.meta.glob('../../components/**/*.{jsx,js,css}', {
+    query: '?raw',
+    import: 'default',
+  }),
+  ...import.meta.glob('../../../packages/**/src/*.{jsx,js}', {
+    query: '?raw',
+    import: 'default',
+  }),
+}
+
+/* Glob keys are relative to this file; registry paths are relative to the repo
+   root. Resolve the former into the latter so the two can be matched. */
+const HERE = 'src/site/components'
+function repoPath(relative) {
+  const parts = HERE.split('/')
+  for (const seg of relative.split('/')) {
+    if (seg === '..') parts.pop()
+    else if (seg !== '.' && seg !== '') parts.push(seg)
+  }
+  return parts.join('/')
+}
+
+const SOURCES = Object.fromEntries(
+  Object.entries(RAW).map(([key, load]) => [repoPath(key), load])
+)
+
+const REGISTRY = Object.fromEntries(
+  registryManifest.items.map((item) => [item.name, item])
+)
+
 
 /* =========================================================
    ComponentsPage
@@ -29,7 +70,11 @@ import './ComponentsPage.css'
    than sitting there as decoration.
    ========================================================= */
 
-const NAV = ['Components', 'Templates', 'Docs']
+const NAV = [
+  { label: 'Docs', view: null },
+  { label: 'Components', view: null, active: true },
+  { label: 'Templates', view: 'templates' },
+]
 
 const SIDEBAR = [
   { title: 'Get Started', items: ['Introduction', 'Installation'] },
@@ -52,7 +97,7 @@ const SIDEBAR = [
 const DOC_PAGES = {
   Introduction: {
     title: 'Introduction',
-    lede: 'Morphiq is a set of interactive React components — glass, motion and depth — built to make interfaces feel alive rather than merely work.',
+    lede: 'Morphiq is a set of eight interactive React effects — glass, dither, motion and depth — built to make interfaces feel alive rather than merely work.',
     blocks: [
       { kind: 'h', text: 'Open code, not a dependency' },
       {
@@ -75,15 +120,18 @@ const DOC_PAGES = {
         kind: 'cols',
         rows: [
           ['Prism Glass', 'A GPU refractive lens for images and render targets — spectral dispersion, frost and a directional rim light from an SDF-defined shape, with no 3D model involved.'],
-          ['ASCII Field', 'A canvas of glyphs that scramble around the cursor and settle back to rest.'],
           ['Magnifying Dock', 'A dock whose items swell as the pointer nears, on springs.'],
+          ['ASCII Field', 'A canvas of glyphs that scramble around the cursor and settle back to rest.'],
+          ['Bitmap Noise', 'A self-generating dither field — two drifting noise layers interfering into patches of particles.'],
+          ['Bitmap Image', 'Any image thresholded into newsprint, by ordered Bayer or true error diffusion.'],
+          ['Bitmap Text', 'Type rasterised into particles, from solid letterforms to a cloud that still reads.'],
           ['Scroll Expand', 'A framed panel that opens to full bleed as you scroll past it.'],
           ['Pressure Text', 'Type that gains weight and width under the cursor.'],
         ],
       },
       {
         kind: 'note',
-        text: 'Prism Glass and ASCII Field are in the registry and installable today. The rest are on the site while their prop APIs are finished.',
+        text: 'Two are shipped and installable today: Prism Glass and Magnifying Dock. The other six run on this site while their prop APIs are finished.',
       },
 
       { kind: 'h', text: 'What Prism Glass refracts' },
@@ -93,7 +141,7 @@ const DOC_PAGES = {
       },
       {
         kind: 'p',
-        text: 'To refract something, put that something in the scene. This site’s landing page does exactly that: the whole page is mirrored into WebGL so the cursor lens has real pixels to bend.',
+        text: 'To refract something, put that something in the scene. The preview above does exactly that: it hands the lens a real image, and the lens bends those pixels.',
       },
 
       { kind: 'h', text: 'License' },
@@ -125,7 +173,7 @@ const DOC_PAGES = {
       { kind: 'p', text: 'Nothing to configure. Works because the registry manifest sits at the repository root.' },
       {
         kind: 'code',
-        text: 'npx shadcn@latest add prathamhpatel/morphiq/prism-glass\nnpx shadcn@latest add prathamhpatel/morphiq/ascii-field',
+        text: 'npx shadcn@latest add prathamhpatel/morphiq/prism-glass\nnpx shadcn@latest add prathamhpatel/morphiq/dock',
         pm: true,
       },
 
@@ -133,7 +181,7 @@ const DOC_PAGES = {
       { kind: 'p', text: 'Do this once and every component is a short name from then on. The CLI writes the entry into your components.json for you.' },
       {
         kind: 'code',
-        text: 'npx shadcn@latest registry add "@morphiq=https://morphiq.prathampatel.design/r/{name}.json"\n\nnpx shadcn@latest add @morphiq/prism-glass\nnpx shadcn@latest add @morphiq/ascii-field',
+        text: 'npx shadcn@latest registry add "@morphiq=https://morphiq.prathampatel.design/r/{name}.json"\n\nnpx shadcn@latest add @morphiq/prism-glass\nnpx shadcn@latest add @morphiq/dock',
         pm: true,
       },
       { kind: 'p', text: 'Or add it by hand:' },
@@ -235,8 +283,10 @@ const DOC_PAGES = {
    component's own defaults. */
 const PAGES = {
   'Magnifying Dock': {
+    registry: 'dock',
     title: 'Magnifying Dock',
     blurb: 'A dock whose items swell as the pointer nears, on springs. Distance drives the scale, so the whole row breathes rather than one icon popping.',
+    install: 'npx shadcn@latest add @morphiq/dock',
     usage: `import Dock from '@/components/dock/Dock'
 
 <Dock
@@ -250,9 +300,9 @@ const PAGES = {
     ],
   },
   'ASCII Field': {
+    registry: 'ascii-field',
     title: 'ASCII Field',
     blurb: 'A canvas of glyphs that scramble around the cursor and settle back to rest — a sprite atlas, a loop and a GSAP timeline.',
-    install: 'npx shadcn@latest add @morphiq/ascii-field',
     usage: `import AsciiField from '@/components/ascii-field'
 
 <AsciiField
@@ -265,7 +315,7 @@ const PAGES = {
 />`,
     state: {
       radius: 51, speed: 16, opacity: 23, spacing: 230,
-      rest: '.', color: '#ffffff', background: '#071228',
+      rest: '.', color: INK, background: BG,
     },
     controls: [
       { key: 'radius', label: 'Radius', min: 40, max: 400, suffix: 'px' },
@@ -306,6 +356,7 @@ const PAGES = {
     ],
   },
   'Prism Glass': {
+    registry: 'prism-glass',
     title: 'Prism Glass',
     blurb: 'A GPU refractive lens — spectral dispersion, uniform frost and a directional rim light, from an SDF-defined shape with no 3D model involved. It refracts the texture you hand it, not the DOM behind it.',
     install: 'npx shadcn@latest add @morphiq/prism-glass',
@@ -471,6 +522,42 @@ function snippetFor(name, v) {
 />`
 }
 
+/* Files and dependencies come from the registry entry when there is one, so a
+   documented component and an installed one can never disagree. Components not
+   yet in the registry name their own files instead. */
+const entryFor = (page) => (page.registry ? REGISTRY[page.registry] : null)
+const filesFor = (page) =>
+  entryFor(page)?.files.map((f) => f.path) ?? page.sourceFiles ?? []
+const depsFor = (page) => entryFor(page)?.dependencies ?? page.deps ?? []
+
+/** The component's real files, fetched on demand — the Code tab is rarely the
+    first thing anyone opens, and these are whole source files. */
+function SourceFiles({ paths }) {
+  const [texts, setTexts] = useState(null)
+  const key = paths.join('|')
+
+  useEffect(() => {
+    let cancelled = false
+    setTexts(null)
+    Promise.all(
+      paths.map((path) => (SOURCES[path] ? SOURCES[path]() : Promise.resolve(null)))
+    ).then((loaded) => {
+      if (!cancelled) setTexts(loaded)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [key])
+
+  if (!texts) return <p className="pane__hint">Reading source&hellip;</p>
+
+  return paths.map((path, i) =>
+    texts[i] == null ? null : (
+      <CodeBlock key={path} text={texts[i]} label={path.split('/').pop()} />
+    )
+  )
+}
+
 function Control({ c, value, onChange }) {
   return (
     <div className="control">
@@ -549,15 +636,17 @@ const groupOf = (name) =>
   SIDEBAR.find((g) => g.items.includes(name))?.title ?? 'Components'
 
 const PM = [
-  { id: 'npm', label: 'npm', run: 'npx' },
-  { id: 'pnpm', label: 'pnpm', run: 'pnpm dlx' },
-  { id: 'yarn', label: 'yarn', run: 'yarn dlx' },
-  { id: 'bun', label: 'bun', run: 'bunx --bun' },
+  { id: 'npm', label: 'npm', run: 'npx', add: 'npm install' },
+  { id: 'pnpm', label: 'pnpm', run: 'pnpm dlx', add: 'pnpm add' },
+  { id: 'yarn', label: 'yarn', run: 'yarn dlx', add: 'yarn add' },
+  { id: 'bun', label: 'bun', run: 'bunx --bun', add: 'bun add' },
 ]
 
-/** Rewrite `npx <pkg>` for the chosen package manager, leaving the rest alone. */
-const forPm = (text, run) =>
-  run === 'npx' ? text : text.replace(/^npx /gm, `${run} `)
+/** Rewrite the runner and the install verb for the chosen package manager. */
+const forPm = (text, pm) =>
+  text
+    .replace(/^npx /gm, `${pm.run} `)
+    .replace(/^npm install /gm, `${pm.add} `)
 
 function CopyButton({ text }) {
   const [done, setDone] = useState(false)
@@ -586,7 +675,7 @@ function CopyButton({ text }) {
 
 function CodeBlock({ text, label, pm }) {
   const [mgr, setMgr] = useState('npm')
-  const shown = pm ? forPm(text, PM.find((p) => p.id === mgr).run) : text
+  const shown = pm ? forPm(text, PM.find((p) => p.id === mgr)) : text
 
   return (
     <div className="code">
@@ -747,13 +836,7 @@ function useTravellingMark(activeKey, selector) {
   }, [activeKey, selector])
 
   const style = mark
-    ? {
-        '--mx': `${mark.x}px`,
-        '--my': `${mark.y}px`,
-        '--mw': `${mark.w}px`,
-        '--mh': `${mark.h}px`,
-        opacity: 1,
-      }
+    ? { '--my': `${mark.y}px`, '--mh': `${mark.h}px`, opacity: 1 }
     : { opacity: 0 }
 
   return [ref, style]
@@ -830,12 +913,18 @@ export default function ComponentsPage({ onNavigate }) {
 
   const set = (key, n) => setValues((v) => ({ ...v, [key]: n }))
 
-  const [navRef, navMark] = useTravellingMark('Components', '.docs__navlink.is-active')
-
   /* Preview by default, and back to it on every page change — landing on Code
      for a component you have not looked at yet is the wrong first screen. */
   const [tab, setTab] = useState('preview')
   useEffect(() => setTab('preview'), [active])
+
+  /* An install command is what "shipped" means here: source, dependencies and
+     the install block are the three halves of one promise, and a component
+     whose prop API is still moving should not be inviting anyone to copy its
+     internals. Unshipped pages stop at the preview and the usage snippet. */
+  const shipped = Boolean(page.install)
+  const deps = shipped ? depsFor(page) : []
+  const sourcePaths = shipped ? filesFor(page) : []
 
   /* The rail mirrors whatever the page actually renders: prose headings for a
      written page, the fixed section stack for a component page. */
@@ -851,18 +940,25 @@ export default function ComponentsPage({ onNavigate }) {
               { id: 'props', text: 'Your settings' },
             ]
           : []),
-        ...(page.install ? [{ id: 'installation', text: 'Installation' }] : []),
+        ...(page.install
+          ? [
+              { id: 'dependencies', text: 'Dependencies' },
+              { id: 'installation', text: 'Installation' },
+            ]
+          : []),
       ]
 
-  // The app shell locks html/body overflow for the component lab; this page
-  // is a normal document and needs it back, same as the landing does.
-  useEffect(() => {
-    document.documentElement.classList.add('site-scroll')
-    return () => document.documentElement.classList.remove('site-scroll')
-  }, [])
+  useEffect(applyTheme, [])
 
   return (
-    <div className="docs">
+    <div className="mq docs">
+      <div className="docs__rules" aria-hidden="true">
+        <span className="docs__v docs__v--a" />
+        <span className="docs__v docs__v--b" />
+        <span className="docs__v docs__v--c" />
+        <span className="docs__v docs__v--d" />
+      </div>
+
       <header className="docs__bar">
         <div className="docs__lead">
           <button
@@ -870,27 +966,27 @@ export default function ComponentsPage({ onNavigate }) {
             className="docs__wordmark"
             onClick={() => onNavigate?.('site')}
           >
-            <img className="docs__mark" src="/logo.svg" alt="" />
+            <span className="mq-mark" aria-hidden="true" />
             Morphiq
           </button>
 
-          <nav className="docs__nav" ref={navRef}>
-            {NAV.map((label) => (
+          <nav className="docs__nav">
+            {NAV.map((item) => (
               <button
-                key={label}
+                key={item.label}
                 type="button"
-                className={`docs__navlink${label === 'Components' ? ' is-active' : ''}`}
+                className={`docs__navlink${item.active ? ' is-active' : ''}`}
+                onClick={() => item.view && onNavigate?.(item.view)}
               >
-                {label}
+                {item.label}
               </button>
             ))}
-            <span className="nav-mark" style={navMark} aria-hidden="true" />
           </nav>
         </div>
 
         <div className="docs__tools">
           <label className="docs__search">
-            <img src={searchIcon} alt="" />
+            <span className="mq-icon mq-icon--search" aria-hidden="true" />
             <input type="search" placeholder="Search" />
           </label>
 
@@ -900,7 +996,7 @@ export default function ComponentsPage({ onNavigate }) {
             target="_blank"
             rel="noreferrer"
           >
-            <img src={githubIcon} alt="" />
+            <span className="mq-icon mq-icon--github" aria-hidden="true" />
             Github
           </a>
         </div>
@@ -932,6 +1028,17 @@ export default function ComponentsPage({ onNavigate }) {
             <>
               <p className="prose__lede prose__lede--tight">{page.blurb}</p>
 
+              {/* Say it before the controls, not after: nobody should dial a
+                  component in, open Code, and only then find out they cannot
+                  install it. */}
+              {shipped ? null : (
+                <p className="prose__note">
+                  <strong>Preview only.</strong> {page.title} runs here while
+                  its props are still settling, so there is no install command
+                  or source to copy yet. It ships to the registry soon.
+                </p>
+              )}
+
               {/* Preview and Code are two views of one thing: the code is
                   generated from the same values driving the component above,
                   so what you copy is what you dialled in — not a fixed
@@ -959,7 +1066,23 @@ export default function ComponentsPage({ onNavigate }) {
                     </Suspense>
                   </div>
                 ) : (
-                  <CodeBlock text={snippetFor(active, values)} label="jsx" />
+                  <>
+                    <p className="pane__hint">
+                      Usage — with the settings you have dialled in on the
+                      Preview tab.
+                    </p>
+                    <CodeBlock text={snippetFor(active, values)} label="usage.jsx" />
+
+                    {shipped ? (
+                      <>
+                        <p className="pane__hint">
+                          Component source — the files the CLI copies into your
+                          project, verbatim.
+                        </p>
+                        <SourceFiles paths={sourcePaths} />
+                      </>
+                    ) : null}
+                  </>
                 )}
               </div>
 
@@ -986,6 +1109,25 @@ export default function ComponentsPage({ onNavigate }) {
                     comes out exactly as you have it here.
                   </p>
                   <CodeBlock text={snippetFor(active, values)} label="jsx" />
+                </>
+              ) : null}
+
+              {shipped ? (
+                <>
+                  <h2 id="dependencies" className="docs__section">Dependencies</h2>
+                  {deps.length ? (
+                    <>
+                      <p className="pane__hint">
+                        The CLI installs these for you. Copying the source by
+                        hand instead? Add them yourself:
+                      </p>
+                      <CodeBlock text={`npm install ${deps.join(' ')}`} pm />
+                    </>
+                  ) : (
+                    <p className="pane__hint">
+                      None. Plain React — no third-party packages to install.
+                    </p>
+                  )}
                 </>
               ) : null}
 

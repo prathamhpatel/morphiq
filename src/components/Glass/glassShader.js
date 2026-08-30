@@ -5,7 +5,7 @@ import * as THREE from 'three'
    Calibrated screen-space refraction: master Refraction gate,
    Depth (reach + warp magnitude), Splay (tangential spread),
    spectral Dispersion, uniform Frost, directional rim Light.
-   Used by both the Glass and FluidGlass components.
+   Used by the Glass component.
    ========================================================= */
 
 export const vertexShader = /* glsl */ `

@@ -1,0 +1,19 @@
+.bitmap-field {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Opt-in full-bleed, for when one of these is the page background rather
+   than a sized element. */
+.bitmap-field--fullscreen {
+  position: fixed;
+  inset: 0;
+}
+
+.bitmap-field__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
