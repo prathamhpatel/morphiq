@@ -11,6 +11,23 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      /* Paint the stored pair before first paint. React sets these on mount,
+         but that is one frame too late: a saved dark theme would flash the
+         stylesheet's light fallback first. Reads the colours themselves rather
+         than an index, so it needs no copy of the palette list to drift. */
+      (function () {
+        try {
+          var s = JSON.parse(localStorage.getItem('morphiq:theme') || 'null')
+          var hex = /^#[0-9a-f]{6}$/i
+          if (!s || !hex.test(s.bg || '') || !hex.test(s.ink || '')) return
+          var r = document.documentElement
+          r.style.setProperty('--mq-bg', s.bg)
+          r.style.setProperty('--mq-ink', s.ink)
+          r.style.colorScheme = s.mode === 'dark' ? 'dark' : 'light'
+        } catch (e) {}
+      })()
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

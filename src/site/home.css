@@ -13,7 +13,7 @@
   /* Content insets, in design px, measured off the hero. The right column
      starts where the stats start and ends where they end. */
   --fh-inset-r: calc(52.16 * var(--mq-s));
-  --fh-inset-end: calc(201.4 * var(--mq-s));
+  --fh-inset-end: calc(var(--mq-x) + 201.4 * var(--mq-s));
   --fh-band-y: calc(112 * var(--mq-s));
 
   /* Fixed rows, in design px. The hero takes the rest of the first screen, so
@@ -61,7 +61,10 @@
 
 .fh__nav {
   position: relative;
-  z-index: 3;
+  /* Above the lockup and the dither: the narrow-viewport menu drops out of
+     this element, and a sheet that paints under the headline is worse than
+     no sheet at all. */
+  z-index: 6;
   flex: none;
   height: var(--fh-nav-h);
   border-bottom: 1px solid var(--mq-rule);
@@ -82,7 +85,7 @@
 
 .fh__links {
   position: absolute;
-  left: calc(353.6 * var(--mq-s));
+  left: calc(var(--mq-x) + 353.6 * var(--mq-s));
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -102,7 +105,7 @@
 
 .fh__github {
   position: absolute;
-  left: calc(1370.7 * var(--mq-s));
+  left: calc(var(--mq-x) + 1370.7 * var(--mq-s));
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -198,7 +201,7 @@
 
 .fh__stats {
   position: absolute;
-  left: calc(866.6 * var(--mq-s));
+  left: calc(var(--mq-x) + 866.6 * var(--mq-s));
   top: calc(51.4 * var(--mq-s));
   margin: 0;
   display: flex;
@@ -554,7 +557,7 @@
   .fh__v--b { display: none; }
 
   .fh__links { display: none; }
-  .fh__github { left: auto; right: var(--mq-inset); }
+  .fh__github { left: auto; right: calc(var(--mq-inset) + 46px); }
 
   .fh__screen { height: auto; }
 
@@ -573,9 +576,13 @@
     line-height: calc(62 * var(--mq-s));
     white-space: normal;
   }
+  /* In flow it would run the full width and cross both outer rules, which
+     are the one piece of the frame that survives at this size. */
   .fh__dither {
     position: static;
     height: calc(380 * var(--mq-s));
+    margin-left: var(--mq-gutter);
+    width: calc(var(--mq-right) - var(--mq-gutter));
   }
 
   .fh__meta {
@@ -615,6 +622,7 @@
     bottom: auto;
     margin-top: calc(48 * var(--mq-s));
   }
+  .fh__dither--end { margin-left: var(--mq-gutter); }
 
   .fh__cols { flex-direction: column; gap: calc(40 * var(--mq-s)); }
 

@@ -1,6 +1,8 @@
 import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Dock from '../../components/Dock/Dock.jsx'
-import { BG, INK, applyTheme } from '../theme.js'
+import { applyTheme, usePalette } from '../theme.js'
+import ThemePicker from '../ThemePicker.jsx'
+import MobileNav from '../MobileNav.jsx'
 
 /* The other components are shown exactly as the lab shows them — same
    modules, same props, same built-in control panels. Nothing about their
@@ -293,10 +295,19 @@ const PAGES = {
   baseSize={40}
   magnifiedSize={90}
 />`,
-    state: { magnification: 90, itemSize: 40 },
+    state: {
+      magnification: 90, itemSize: 40,
+      surface: '#08101e', border: '#142544', itemBorder: '#0c1f43',
+      accent: '#639aff', icon: '#ffffff',
+    },
     controls: [
       { key: 'magnification', label: 'Magnification', min: 0, max: 100 },
       { key: 'itemSize', label: 'Item Size', min: 24, max: 64 },
+      { key: 'surface', label: 'Surface', kind: 'color' },
+      { key: 'border', label: 'Border', kind: 'color' },
+      { key: 'itemBorder', label: 'Item Border', kind: 'color' },
+      { key: 'accent', label: 'Accent', kind: 'color' },
+      { key: 'icon', label: 'Icon', kind: 'color' },
     ],
   },
   'ASCII Field': {
@@ -315,7 +326,7 @@ const PAGES = {
 />`,
     state: {
       radius: 51, speed: 16, opacity: 23, spacing: 230,
-      rest: '.', color: INK, background: BG,
+      rest: '.', color: '#ffffff', background: '#071228',
     },
     controls: [
       { key: 'radius', label: 'Radius', min: 40, max: 400, suffix: 'px' },
@@ -395,6 +406,23 @@ const PAGES = {
 
 const ROUND = new Set(['circle', 'cursor', 'svg'])
 
+/* The colour inputs are <input type="color">, which only accepts a literal
+   hex — so blends have to be resolved here rather than left as color-mix(). */
+const hex = (c) => parseInt(c.slice(1), 16)
+function mix(from, to, amount) {
+  const a = hex(from)
+  const b = hex(to)
+  const ch = (shift) => {
+    const x = (a >> shift) & 255
+    const y = (b >> shift) & 255
+    return Math.round(x + (y - x) * amount)
+  }
+  return (
+    '#' +
+    [ch(16), ch(8), ch(0)].map((v) => v.toString(16).padStart(2, '0')).join('')
+  )
+}
+
 function Preview({ name, v }) {
   if (name === 'ASCII Field') {
     return (
@@ -448,6 +476,11 @@ function Preview({ name, v }) {
     <Dock
       baseSize={v.itemSize}
       magnifiedSize={Math.round(v.itemSize * (1 + (v.magnification / 100) * 0.8))}
+      surface={v.surface}
+      border={v.border}
+      itemBorder={v.itemBorder}
+      accent={v.accent}
+      icon={v.icon}
     />
   )
 }
@@ -519,6 +552,11 @@ function snippetFor(name, v) {
 <Dock
   baseSize={${v.itemSize}}
   magnifiedSize={${Math.round(v.itemSize * (1 + (v.magnification / 100) * 0.8))}}
+  surface="${v.surface}"
+  border="${v.border}"
+  itemBorder="${v.itemBorder}"
+  accent="${v.accent}"
+  icon="${v.icon}"
 />`
 }
 
@@ -904,12 +942,64 @@ export default function ComponentsPage({ onNavigate }) {
   const [active, setActive] = useState('Magnifying Dock')
   const doc = DOC_PAGES[active]
   const page = PAGES[active] ?? PAGES['Magnifying Dock']
-  const [values, setValues] = useState(page.state)
+  const palette = usePalette()
+
+  /* Two components paint with explicit colours rather than inheriting from the
+     page. Their own defaults are standalone — that is what an installed copy
+     gets — so it is this page that maps them onto the site's pair, the same way
+     any host would map them onto its own. */
+  const paintFor = (name, { bg, ink }) => {
+    if (name === 'ASCII Field') return { color: ink, background: bg }
+    if (name === 'Magnifying Dock') {
+      return {
+        surface: ink,
+        border: mix(ink, bg, 0.22),
+        itemBorder: mix(ink, bg, 0.14),
+        accent: mix(ink, bg, 0.5),
+        icon: bg,
+      }
+    }
+    return {}
+  }
+
+  const seed = (name) => ({
+    ...(PAGES[name]?.state ?? {}),
+    ...paintFor(name, palette),
+  })
+
+  const [values, setValues] = useState(() => seed('Magnifying Dock'))
 
   const pick = (name) => {
     setActive(name)
-    if (PAGES[name]) setValues(PAGES[name].state)
+    if (PAGES[name]) setValues(seed(name))
   }
+
+  /* Changing the theme repaints the preview too — a picker that restyled the
+     chrome but left the component on its old colours would show the one thing
+     the page is about in the wrong palette.
+
+     Only colours still sitting where the last theme put them are rewritten. A
+     value the reader has actually chosen is theirs, and survives; the previous
+     paint is remembered for exactly that comparison. */
+  const painted = useRef(paintFor('Magnifying Dock', palette))
+
+  useEffect(() => {
+    const next = paintFor(active, palette)
+    /* Read the previous paint into a local before handing the updater to
+       React: the updater runs on the next render, by which point the ref has
+       already moved on, and every colour would compare equal to the paint it
+       is being asked to replace. */
+    const prev = painted.current
+    painted.current = next
+
+    setValues((v) => {
+      const out = { ...v }
+      for (const [key, value] of Object.entries(next)) {
+        if (v[key] === prev[key]) out[key] = value
+      }
+      return out
+    })
+  }, [palette.bg, palette.ink, active])
 
   const set = (key, n) => setValues((v) => ({ ...v, [key]: n }))
 
@@ -1000,6 +1090,14 @@ export default function ComponentsPage({ onNavigate }) {
             Github
           </a>
         </div>
+
+        <MobileNav
+          current="Components"
+          items={NAV.map((item) => ({
+            label: item.label,
+            onSelect: () => item.view && onNavigate?.(item.view),
+          }))}
+        />
       </header>
 
       <div className="docs__body">
@@ -1145,6 +1243,8 @@ export default function ComponentsPage({ onNavigate }) {
 
         <Toc items={tocItems} />
       </div>
+
+      <ThemePicker />
     </div>
   )
 }

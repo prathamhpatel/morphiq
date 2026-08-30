@@ -20,6 +20,16 @@ const BASE_SIZE = 36       // Baseline item width/height (36px x 36px)
 const MAGNIFIED_SIZE = 54  // Magnified item width/height (54px x 54px)
 const MAX_Y = -14          // Upward elevation offset
 
+/* Standalone palette. These are the component's own defaults — deliberately
+   not tied to any host theme, so an installed copy looks right on day one.
+   Pass the props to match your own design; the dock writes them as custom
+   properties and the stylesheet reads them from there. */
+const SURFACE = '#08101e'      // dock bar and item fill
+const BORDER = '#142544'       // bar and tooltip hairline
+const ITEM_BORDER = '#0c1f43'  // item hairline, at rest
+const ACCENT = '#639aff'       // active item and backlight glow
+const ICON = '#ffffff'         // glyphs and tooltip text
+
 /* =========================================================
    DockItem Component (100% Opacity Tooltip + Slide-In & Fade Out)
    ========================================================= */
@@ -121,7 +131,17 @@ function DockItem({ item, index, mouseX, activeIndex, onClick, baseSize, magnifi
    Main Dock Container
    ========================================================= */
 
-export default function Dock({ baseSize = BASE_SIZE, magnifiedSize = MAGNIFIED_SIZE }) {
+export default function Dock({
+  baseSize = BASE_SIZE,
+  magnifiedSize = MAGNIFIED_SIZE,
+
+  // --- paint ---
+  surface = SURFACE,
+  border = BORDER,
+  itemBorder = ITEM_BORDER,
+  accent = ACCENT,
+  icon = ICON,
+}) {
   const mouseX = useMotionValue(Infinity)
   const [activeIndex, setActiveIndex] = useState(null)
   const dockRef = useRef(null)
@@ -152,7 +172,17 @@ export default function Dock({ baseSize = BASE_SIZE, magnifiedSize = MAGNIFIED_S
   }, { scope: dockRef })
 
   return (
-    <div className="dock-container" ref={dockRef}>
+    <div
+      className="dock-container"
+      ref={dockRef}
+      style={{
+        '--dock-surface': surface,
+        '--dock-border': border,
+        '--dock-item-border': itemBorder,
+        '--dock-accent': accent,
+        '--dock-icon': icon,
+      }}
+    >
       {/* Ambient Backlight Glow */}
       <div className="dock-glow" />
 

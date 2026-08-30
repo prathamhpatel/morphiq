@@ -35,7 +35,7 @@
 
 .tpl__nav {
   position: relative;
-  z-index: 3;
+  z-index: 6;
   flex: none;
   height: var(--tpl-nav-h);
   border-bottom: 1px solid var(--mq-rule);
@@ -62,7 +62,7 @@
 
 .tpl__links {
   position: absolute;
-  left: calc(353.6 * var(--mq-s));
+  left: calc(var(--mq-x) + 353.6 * var(--mq-s));
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -72,7 +72,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--mq-dim);
+  color: var(--mq-soft);
   font-family: inherit;
   font-size: calc(16 * var(--mq-s));
   font-weight: 500;
@@ -80,12 +80,15 @@
   cursor: pointer;
   transition: color 0.14s ease;
 }
-.tpl__links button:hover { color: var(--mq-soft); }
-.tpl__links button.is-active { color: var(--mq-ink); }
+.tpl__links button:hover { color: var(--mq-ink); }
+.tpl__links button.is-active {
+  color: var(--mq-ink);
+  font-weight: 600;
+}
 
 .tpl__github {
   position: absolute;
-  left: calc(1370.7 * var(--mq-s));
+  left: calc(var(--mq-x) + 1370.7 * var(--mq-s));
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -203,7 +206,7 @@
 
   .tpl__v--b { display: none; }
   .tpl__links { display: none; }
-  .tpl__github { left: auto; right: var(--mq-inset); }
+  .tpl__github { left: auto; right: calc(var(--mq-inset) + 46px); }
 
   .tpl__body { display: flex; flex-direction: column; }
   .tpl__lockup {
@@ -218,5 +221,7 @@
   .tpl__dither {
     position: static;
     height: calc(280 * var(--mq-s));
+    margin-left: var(--mq-gutter);
+    width: calc(var(--mq-right) - var(--mq-gutter));
   }
 }

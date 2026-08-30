@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
-import { BG, INK, applyTheme } from './theme.js'
+import { applyTheme, usePalette } from './theme.js'
+import ThemePicker from './ThemePicker.jsx'
+import MobileNav from './MobileNav.jsx'
 import BitmapText from '../components/BitmapText/BitmapText.jsx'
 import './templates.css'
 
@@ -13,6 +15,7 @@ const REPO = 'https://github.com/prathamhpatel/morphiq'
  * than leaving two words on a page and calling it a design.
  */
 export default function Templates({ onNavigate }) {
+  const { bg, ink } = usePalette()
   useEffect(applyTheme, [])
 
   return (
@@ -43,6 +46,15 @@ export default function Templates({ onNavigate }) {
           <span className="mq-icon mq-icon--github" aria-hidden="true" />
           Github
         </a>
+
+        <MobileNav
+          current="Templates"
+          items={[
+            { label: 'Docs', onSelect: () => onNavigate?.('docs') },
+            { label: 'Components', onSelect: () => onNavigate?.('docs') },
+            { label: 'Templates', onSelect: () => {} },
+          ]}
+        />
       </header>
 
       <section className="tpl__body">
@@ -82,11 +94,13 @@ export default function Templates({ onNavigate }) {
             cell={5}
             dither="bayer4"
             padding={0}
-            color={INK}
-            background={BG}
+            color={ink}
+            background={bg}
           />
         </div>
       </section>
+
+      <ThemePicker />
     </div>
   )
 }

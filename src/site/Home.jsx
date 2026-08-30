@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { BG, INK, applyTheme } from './theme.js'
+import { applyTheme, usePalette } from './theme.js'
+import ThemePicker from './ThemePicker.jsx'
+import MobileNav from './MobileNav.jsx'
 import BitmapNoise from '../components/BitmapNoise/BitmapNoise.jsx'
 import BitmapText from '../components/BitmapText/BitmapText.jsx'
 import './home.css'
@@ -138,6 +140,7 @@ function CopyLine({ command }) {
 }
 
 export default function Home({ onNavigate }) {
+  const { bg, ink } = usePalette()
   useEffect(applyTheme, [])
 
   const go = (view) => view && onNavigate?.(view)
@@ -172,6 +175,14 @@ export default function Home({ onNavigate }) {
               <span className="mq-icon mq-icon--github" aria-hidden="true" />
               Github
             </a>
+
+            <MobileNav
+              items={[
+                { label: 'Docs', onSelect: () => go('docs') },
+                { label: 'Components', onSelect: () => go('docs') },
+                { label: 'Templates', onSelect: () => go('templates') },
+              ]}
+            />
           </header>
 
           <section className="fh__hero">
@@ -210,8 +221,8 @@ export default function Home({ onNavigate }) {
                 cursorRadius={297}
                 cursorStrength={-42}
                 cursorLift={-0.4}
-                color={INK}
-                background={BG}
+                color={ink}
+                background={bg}
               />
             </div>
           </section>
@@ -371,8 +382,8 @@ export default function Home({ onNavigate }) {
               cell={5}
               dither="bayer4"
               padding={0}
-              color={INK}
-              background={BG}
+              color={ink}
+              background={bg}
             />
           </div>
         </section>
@@ -425,6 +436,8 @@ export default function Home({ onNavigate }) {
           </p>
         </div>
       </footer>
+
+      <ThemePicker />
     </div>
   )
 }

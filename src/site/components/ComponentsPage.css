@@ -12,11 +12,11 @@
  *    |   nav    |          reading           |   rail    |
  */
 .docs {
-  --dk-side: 22.780%;   /* 372  */
-  --dk-rail: 78.445%;   /* 1281 */
+  --dk-side: calc(var(--mq-x) + 372 * var(--mq-s));
+  --dk-rail: calc(var(--mq-x) + 1281 * var(--mq-s));
   --dk-bar: calc(72 * var(--mq-s));
   --dk-pad: calc(40 * var(--mq-s));
-  --dk-gh: calc(1370.7 * var(--mq-s));   /* the home page's Github x */
+  --dk-gh: calc(var(--mq-x) + 1370.7 * var(--mq-s)); /* the home page's Github x */
 
   position: relative;
   overflow-x: hidden;
@@ -84,7 +84,7 @@
 
 .docs__nav {
   position: absolute;
-  left: calc(353.6 * var(--mq-s));
+  left: calc(var(--mq-x) + 353.6 * var(--mq-s));
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -97,7 +97,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--mq-dim);
+  color: var(--mq-soft);
   font-family: inherit;
   font-size: calc(16 * var(--mq-s));
   font-weight: 500;
@@ -105,8 +105,11 @@
   cursor: pointer;
   transition: color 0.14s ease;
 }
-.docs__navlink:hover { color: var(--mq-soft); }
-.docs__navlink.is-active { color: var(--mq-ink); }
+.docs__navlink:hover { color: var(--mq-ink); }
+.docs__navlink.is-active {
+  color: var(--mq-ink);
+  font-weight: 600;
+}
 
 /* The Github button keeps the home page's x exactly. */
 .docs__github {
@@ -479,6 +482,20 @@
   inset: 0;
 }
 
+/* Its host page is a dark sheet with white type. Inside the preview the sheet
+   is the site's own ground, so the theme reaches this one too — the slots that
+   sit over the photograph keep their white, which the media needs. */
+.docs__stage .sxd {
+  background: var(--mq-bg);
+  color: var(--mq-ink);
+  font-family: var(--morphiq-font);
+}
+.docs__stage .sxd__eyebrow,
+.docs__stage .sxd__note,
+.docs__stage .sxd__tail p {
+  color: var(--mq-soft);
+}
+
 /* The Scroll Expand host is written for a full page: viewport-tall sections
    either side of the panel and type sized in vw. Both are re-scaled to the
    preview box so the whole sequence reads at this size. */
@@ -707,6 +724,27 @@
   .toc { display: none; }
 }
 
+/* The shared narrow nav appears at 900, so the bar has to give up its inline
+   links and search at exactly the same width — otherwise both navs are up at
+   once and the Github button collides with the hamburger. */
+@media (max-width: 900px) {
+  .docs__nav,
+  .docs__search { display: none; }
+
+  .docs__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--mq-inset);
+  }
+  .docs__wordmark { position: static; transform: none; }
+  .docs__github {
+    position: static;
+    transform: none;
+    margin-right: 46px;
+  }
+}
+
 @media (max-width: 820px) {
   .docs {
     --mq-s: calc(100vw / 640);
@@ -718,17 +756,6 @@
   }
 
   .docs__v--b { display: none; }
-  .docs__nav,
-  .docs__search { display: none; }
-
-  .docs__wordmark { position: static; transform: none; }
-  .docs__bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 var(--mq-inset);
-  }
-  .docs__github { position: static; transform: none; }
 
   .docs__body { grid-template-columns: 1fr; }
 
