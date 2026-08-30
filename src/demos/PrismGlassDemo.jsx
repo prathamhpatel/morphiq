@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { PrismGlass } from '@morphiq/prism-glass'
-import backdrop from '../components/Glass/backdrop.png'
-import cursorSvg from '../components/FluidGlass/cursor.svg'
+import backdrop from '../components/PrismGlass/morphiqbg.png'
+import cursorSvg from '../components/PrismGlass/cursor.svg'
 import '../components/Glass/Glass.css'
 
 /* Demo harness for the packaged component. The sliders live HERE, in the app —

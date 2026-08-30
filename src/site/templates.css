@@ -1,0 +1,222 @@
+@import './theme.css';
+
+/*
+ * The templates page borrows the home page's first screen exactly: nav band,
+ * statement left, dither right, everything on the same three rules. It is the
+ * one screen on the site with nothing to show yet, so it leans on the grid to
+ * say "this is the same place" rather than inventing a layout of its own.
+ */
+.tpl {
+  --tpl-nav-h: calc(72 * var(--mq-s));
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.tpl__rules {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.tpl__v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--mq-rule);
+}
+.tpl__v--a { left: var(--mq-gutter); }
+.tpl__v--b { left: var(--mq-mid); top: var(--tpl-nav-h); }
+.tpl__v--c { left: var(--mq-right); }
+
+.tpl__nav {
+  position: relative;
+  z-index: 3;
+  flex: none;
+  height: var(--tpl-nav-h);
+  border-bottom: 1px solid var(--mq-rule);
+}
+
+.tpl__wordmark {
+  position: absolute;
+  left: var(--mq-inset);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: calc(6 * var(--mq-s));
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: calc(20 * var(--mq-s));
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tpl__links {
+  position: absolute;
+  left: calc(353.6 * var(--mq-s));
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: calc(32 * var(--mq-s));
+}
+.tpl__links button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mq-dim);
+  font-family: inherit;
+  font-size: calc(16 * var(--mq-s));
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.14s ease;
+}
+.tpl__links button:hover { color: var(--mq-soft); }
+.tpl__links button.is-active { color: var(--mq-ink); }
+
+.tpl__github {
+  position: absolute;
+  left: calc(1370.7 * var(--mq-s));
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: calc(5.745 * var(--mq-s));
+  padding: calc(8 * var(--mq-s)) calc(16 * var(--mq-s));
+  border-radius: calc(4 * var(--mq-s));
+  background: var(--mq-ink);
+  color: var(--mq-bg);
+  font-size: calc(16 * var(--mq-s));
+  font-weight: 500;
+  line-height: 0.88;
+  text-decoration: none;
+}
+
+.tpl__body {
+  position: relative;
+  flex: 1;
+}
+
+.tpl__lockup {
+  position: absolute;
+  left: var(--mq-inset);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  max-width: calc(590 * var(--mq-s));
+}
+
+.tpl__eyebrow {
+  margin: 0 0 calc(20 * var(--mq-s));
+  font-size: calc(16 * var(--mq-s));
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mq-soft);
+}
+
+.tpl__title {
+  margin: 0;
+  font-size: calc(80 * var(--mq-s));
+  font-weight: 500;
+  line-height: calc(80 * var(--mq-s));
+}
+
+.tpl__lede {
+  margin: calc(28 * var(--mq-s)) 0 0;
+  font-size: calc(22 * var(--mq-s));
+  line-height: calc(34 * var(--mq-s));
+  color: var(--mq-soft);
+}
+
+.tpl__note {
+  margin: calc(20 * var(--mq-s)) 0 0;
+  padding-left: calc(18 * var(--mq-s));
+  border-left: 2px solid var(--mq-ink);
+  font-size: calc(18 * var(--mq-s));
+  line-height: calc(28 * var(--mq-s));
+}
+
+.tpl__actions {
+  display: flex;
+  align-items: center;
+  gap: calc(28 * var(--mq-s));
+  margin-top: calc(36 * var(--mq-s));
+}
+
+.tpl__cta {
+  display: flex;
+  align-items: center;
+  gap: calc(6.639 * var(--mq-s));
+  height: calc(51 * var(--mq-s));
+  padding: 0 calc(28 * var(--mq-s));
+  border: 0;
+  border-radius: calc(8 * var(--mq-s));
+  background: var(--mq-ink);
+  color: var(--mq-bg);
+  font-family: inherit;
+  font-size: calc(20 * var(--mq-s));
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tpl__link {
+  padding-bottom: calc(4 * var(--mq-s));
+  border-bottom: 1px solid var(--mq-rule);
+  color: var(--mq-ink);
+  font-size: calc(20 * var(--mq-s));
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.14s ease;
+}
+.tpl__link:hover { border-bottom-color: var(--mq-ink); }
+
+.tpl__dither {
+  position: absolute;
+  left: calc(var(--mq-mid) + 1px);
+  right: calc(100% - var(--mq-right));
+  top: calc(90 * var(--mq-s));
+  bottom: calc(90 * var(--mq-s));
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .tpl {
+    --mq-s: calc(100vw / 640);
+    --mq-inset: calc(28 * var(--mq-s));
+    --mq-gutter: calc(14 * var(--mq-s));
+    --mq-right: calc(100% - 14 * var(--mq-s));
+    --tpl-nav-h: calc(84 * var(--mq-s));
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .tpl__v--b { display: none; }
+  .tpl__links { display: none; }
+  .tpl__github { left: auto; right: var(--mq-inset); }
+
+  .tpl__body { display: flex; flex-direction: column; }
+  .tpl__lockup {
+    position: static;
+    transform: none;
+    max-width: none;
+    padding: calc(52 * var(--mq-s)) var(--mq-inset);
+  }
+  .tpl__title { font-size: calc(64 * var(--mq-s)); line-height: 1; }
+  .tpl__actions { flex-wrap: wrap; gap: calc(20 * var(--mq-s)); }
+
+  .tpl__dither {
+    position: static;
+    height: calc(280 * var(--mq-s));
+  }
+}
