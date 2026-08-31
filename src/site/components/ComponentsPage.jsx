@@ -761,6 +761,7 @@ function Breadcrumb({ group, page }) {
 
 function Toc({ items }) {
   const [seen, setSeen] = useState(items[0]?.id)
+  const [listRef, mark] = useTravellingMark(seen, '.toc__link.is-active')
 
   useEffect(() => {
     if (!items.length) return
@@ -788,7 +789,7 @@ function Toc({ items }) {
   return (
     <aside className="toc">
       <p className="toc__title">On this page</p>
-      <ul className="toc__list">
+      <ul className="toc__list" ref={listRef}>
         {items.map((i) => (
           <li key={i.id}>
             <a
@@ -799,6 +800,7 @@ function Toc({ items }) {
             </a>
           </li>
         ))}
+        <span className="toc__mark" style={mark} aria-hidden="true" />
       </ul>
     </aside>
   )
