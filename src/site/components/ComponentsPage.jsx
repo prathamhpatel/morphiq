@@ -424,8 +424,6 @@ function mix(from, to, amount) {
 }
 
 function Preview({ name, v }) {
-  const { mode } = usePalette()
-
   if (name === 'ASCII Field') {
     return (
       <AsciiField
@@ -442,7 +440,6 @@ function Preview({ name, v }) {
   if (name === 'Scroll Expand') {
     return (
       <ScrollExpandDemo
-        mode={mode}
         width={v.width}
         height={v.height}
         radius={v.radius}

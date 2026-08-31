@@ -503,12 +503,13 @@
   color: var(--mq-soft);
 }
 
-/* These two set their own white for the bench, where the sheet is always dark.
-   In here the media follows the mode, so they follow the ink like everything
-   else — white would vanish into the light plate. */
-.docs__stage .sxd__hint,
-.docs__stage .sxd__reveal p {
-  color: var(--mq-soft);
+/* Everything inside the panel sits on the photograph, so it is lit by the
+   media and not by the page: one fixed white, in every palette and both
+   modes. Only the sections either side follow the theme — those are on the
+   sheet. (The theme's ink here would be near-black on half the renderings,
+   over a night shot.) */
+.docs__stage .scroll-expand__stage {
+  color: #fff;
 }
 
 /* The Scroll Expand host is written for a full page: viewport-tall sections
