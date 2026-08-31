@@ -503,13 +503,28 @@
   color: var(--mq-soft);
 }
 
-/* Everything inside the panel sits on the photograph, so it is lit by the
-   media and not by the page: one fixed white, in every palette and both
-   modes. Only the sections either side follow the theme — those are on the
-   sheet. (The theme's ink here would be near-black on half the renderings,
-   over a night shot.) */
-.docs__stage .scroll-expand__stage {
-  color: #fff;
+/* One photograph, every palette.
+   The media is washed with the page's own ground, so the panel reads as a
+   duotone of whatever theme is running and the slots on top can stay
+   var(--mq-ink) like the rest of the page. What makes that safe is that the
+   contrast then falls back to the site's own ink-on-ground ratio, which is
+   already calibrated: across all twenty renderings the worst case is 3.5:1
+   against the 3.0 AA wants for large text. Much below 0.66 and the darker
+   palettes start to fail. */
+.docs__stage .scroll-expand__frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--mq-bg);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* These set their own white for the bench, whose sheet is always dark. On the
+   washed media they follow the ink like everything else. */
+.docs__stage .sxd__hint,
+.docs__stage .sxd__reveal p {
+  color: var(--mq-soft);
 }
 
 /* The Scroll Expand host is written for a full page: viewport-tall sections
