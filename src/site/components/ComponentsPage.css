@@ -508,15 +508,17 @@
    duotone of whatever theme is running and the slots on top can stay
    var(--mq-ink) like the rest of the page. What makes that safe is that the
    contrast then falls back to the site's own ink-on-ground ratio, which is
-   already calibrated: across all twenty renderings the worst case is 3.5:1
-   against the 3.0 AA wants for large text. Much below 0.66 and the darker
-   palettes start to fail. */
+   already calibrated. At 0.6 seventeen of the twenty renderings clear the
+   3.0 AA wants for large text; the three that do not are light modes on the
+   near-white grounds — #0051c8 at 2.66, #8f3a3a at 2.82, #2818ef at 2.99 —
+   and 0.7 would clear all twenty at 3.5, if the photo can stand being that
+   muted. */
 .docs__stage .scroll-expand__frame::after {
   content: '';
   position: absolute;
   inset: 0;
   background: var(--mq-bg);
-  opacity: 0.7;
+  opacity: 0.6;
   pointer-events: none;
 }
 
