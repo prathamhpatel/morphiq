@@ -54,8 +54,10 @@ const pageFor = (view) =>
   ]
 
 function App() {
+  // The docs page appends its own segment (#docs/scroll-expand), so route on
+  // the first one and let that page read the rest.
   const [view, setView] = useState(
-    () => ROUTES[window.location.hash.slice(1)] ?? 'site'
+    () => ROUTES[window.location.hash.slice(1).split('/')[0]] ?? 'site'
   )
 
   useEffect(initAnalytics, [])
