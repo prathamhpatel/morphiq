@@ -503,26 +503,6 @@
   color: var(--mq-soft);
 }
 
-/* One photograph, every palette.
-   The slots keep var(--mq-ink) like the rest of the page. What makes that
-   safe on a photograph is the halo: the glyphs carry a short glow of the
-   page's own ground, so whatever the media happens to be underneath, the ink
-   is always read against --mq-bg — the site's own calibrated pair.
-   No single photograph can do this on its own. The ink runs from near-black
-   on the light modes to near-white on the dark ones, so the media would have
-   to be light and dark at once; measured across eleven candidates the best
-   worst-case was 1.87:1 against the 3.0 AA wants for large text. */
-.docs__stage .scroll-expand__stage :is(.sxd__caption, .sxd__reveal h3) {
-  text-shadow:
-    0 0 2px var(--mq-bg),
-    0 0 10px var(--mq-bg),
-    0 0 22px var(--mq-bg);
-}
-
-.docs__stage .scroll-expand__stage :is(.sxd__hint, .sxd__reveal p) {
-  text-shadow: 0 0 8px var(--mq-bg), 0 0 16px var(--mq-bg);
-}
-
 /* These set their own white for the bench, whose sheet is always dark. On the
    washed media they follow the ink like everything else. */
 .docs__stage .sxd__hint,
