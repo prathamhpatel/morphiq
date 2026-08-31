@@ -19,7 +19,11 @@
   --dk-gh: calc(var(--mq-x) + 1370.7 * var(--mq-s)); /* the home page's Github x */
 
   position: relative;
-  overflow-x: hidden;
+  /* clip, not hidden: `overflow-x: hidden` forces the other axis to compute as
+     `auto`, which makes this a scroll container — and then the sticky rails
+     inside stick to it rather than to the viewport, so they scroll away with
+     the page. `clip` cuts the same overflow without the scroll container. */
+  overflow-x: clip;
 }
 
 .docs__rules {
@@ -175,6 +179,9 @@
 .docs__side {
   position: sticky;
   top: var(--dk-bar);
+  max-height: calc(100vh - var(--dk-bar));
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   gap: calc(36 * var(--mq-s));
@@ -697,6 +704,9 @@
 .toc {
   position: sticky;
   top: var(--dk-bar);
+  max-height: calc(100vh - var(--dk-bar));
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: calc(48 * var(--mq-s)) var(--mq-inset) calc(64 * var(--mq-s))
     var(--dk-pad);
 }
