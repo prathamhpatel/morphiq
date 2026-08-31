@@ -491,8 +491,7 @@
 }
 
 /* Its host page is a dark sheet with white type. Inside the preview the sheet
-   is the site's own ground, so the theme reaches this one too — the slots that
-   sit over the photograph keep their white, which the media needs. */
+   is the site's own ground, so the theme reaches this one too. */
 .docs__stage .sxd {
   background: var(--mq-bg);
   color: var(--mq-ink);
@@ -502,6 +501,16 @@
 .docs__stage .sxd__note,
 .docs__stage .sxd__tail p {
   color: var(--mq-soft);
+}
+
+/* Everything in the stage sits on top of the photograph, so it is lit by the
+   media rather than by the page and stays white in every palette. Setting the
+   theme's ink on .sxd above was reaching these too: on a light ground the
+   caption and the reveal heading came out dark navy over a near-black night
+   shot and disappeared. Only the sections either side of the panel follow the
+   theme — they are on the sheet, not on the media. */
+.docs__stage .scroll-expand__stage {
+  color: #fff;
 }
 
 /* The Scroll Expand host is written for a full page: viewport-tall sections
