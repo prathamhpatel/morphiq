@@ -503,6 +503,14 @@
   color: var(--mq-soft);
 }
 
+/* These two set their own white for the bench, where the sheet is always dark.
+   In here the media follows the mode, so they follow the ink like everything
+   else — white would vanish into the light plate. */
+.docs__stage .sxd__hint,
+.docs__stage .sxd__reveal p {
+  color: var(--mq-soft);
+}
+
 /* The Scroll Expand host is written for a full page: viewport-tall sections
    either side of the panel and type sized in vw. Both are re-scaled to the
    preview box so the whole sequence reads at this size. */
