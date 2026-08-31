@@ -670,6 +670,17 @@ const slug = (s) =>
 /* Flat reading order, derived from the sidebar so the two can never disagree */
 const ORDER = SIDEBAR.flatMap((g) => g.items)
 
+/* The chosen component lives in the hash as #docs/<slug>, so a reload — or a
+   link someone sends — lands back on the page you were reading instead of
+   resetting to the first one in the list. */
+const slugOf = (name) => name.toLowerCase().replace(/\s+/g, '-')
+const FIRST = 'Magnifying Dock' // the landing page, unchanged from before
+
+const readActive = () => {
+  const slug = window.location.hash.slice(1).split('/')[1]
+  return ORDER.find((name) => slugOf(name) === slug) ?? FIRST
+}
+
 const groupOf = (name) =>
   SIDEBAR.find((g) => g.items.includes(name))?.title ?? 'Components'
 
@@ -941,7 +952,7 @@ function DocBlocks({ blocks }) {
 }
 
 export default function ComponentsPage({ onNavigate }) {
-  const [active, setActive] = useState('Magnifying Dock')
+  const [active, setActive] = useState(readActive)
   const doc = DOC_PAGES[active]
   const page = PAGES[active] ?? PAGES['Magnifying Dock']
   const palette = usePalette()
@@ -969,12 +980,29 @@ export default function ComponentsPage({ onNavigate }) {
     ...paintFor(name, palette),
   })
 
-  const [values, setValues] = useState(() => seed('Magnifying Dock'))
+  const [values, setValues] = useState(() => seed(readActive()))
 
   const pick = (name) => {
     setActive(name)
     if (PAGES[name]) setValues(seed(name))
+    window.location.hash = `docs/${slugOf(name)}`
   }
+
+  /* Back and forward move between components too, now that each one has its
+     own hash. seed closes over the live palette, so it is read through a ref
+     rather than captured when the listener is attached. */
+  const seedRef = useRef(seed)
+  seedRef.current = seed
+
+  useEffect(() => {
+    const onHash = () => {
+      const next = readActive()
+      setActive(next)
+      if (PAGES[next]) setValues(seedRef.current(next))
+    }
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
 
   /* Changing the theme repaints the preview too — a picker that restyled the
      chrome but left the component on its old colours would show the one thing
