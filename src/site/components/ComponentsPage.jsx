@@ -722,12 +722,36 @@ function CopyButton({ text }) {
   )
 }
 
+/* Whole source files run to a few hundred lines, and the Code tab lists
+   several of them — left open, reaching the stylesheet means scrolling past
+   all of the component. Anything longer than this opens clipped with a count,
+   so the files read as a stack you can page through. Short blocks — install
+   commands, the usage snippet — are never touched. */
+const COLLAPSE_AFTER = 20
+
 function CodeBlock({ text, label, pm }) {
   const [mgr, setMgr] = useState('npm')
+  const [open, setOpen] = useState(false)
+  const hostRef = useRef(null)
   const shown = pm ? forPm(text, PM.find((p) => p.id === mgr)) : text
 
+  const lines = shown.split('\n').length
+  const long = lines > COLLAPSE_AFTER
+  const clipped = long && !open
+
+  /* Collapsing from the bottom of a long file would leave the reader wherever
+     that file used to end, which is now somewhere else entirely. */
+  const toggle = () => {
+    const closing = open
+    setOpen(!open)
+    if (closing) {
+      const top = hostRef.current?.getBoundingClientRect().top ?? 0
+      if (top < 0) hostRef.current?.scrollIntoView({ block: 'start' })
+    }
+  }
+
   return (
-    <div className="code">
+    <div ref={hostRef} className={`code${clipped ? ' is-clipped' : ''}`}>
       <div className="code__bar">
         {pm ? (
           <div className="code__tabs" role="tablist">
@@ -754,6 +778,17 @@ function CodeBlock({ text, label, pm }) {
       <pre className="code__body">
         <code>{shown}</code>
       </pre>
+
+      {long ? (
+        <button
+          type="button"
+          className="code__more"
+          aria-expanded={open}
+          onClick={toggle}
+        >
+          {open ? 'Show less' : `Show all ${lines} lines`}
+        </button>
+      ) : null}
     </div>
   )
 }
