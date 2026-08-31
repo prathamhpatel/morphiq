@@ -1,7 +1,8 @@
-import { Suspense, lazy, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import Home from './site/Home.jsx'
 import Templates from './site/Templates.jsx'
 import ComponentsPage from './site/components/ComponentsPage.jsx'
+import { initAnalytics, trackPageView } from './site/analytics.js'
 import './App.css'
 
 // The home page is the entry point, so the lab (three.js, shaders) loads on demand.
@@ -37,10 +38,33 @@ const ROUTES = {
 const SITE = new Set(['site', 'docs', 'templates', 'lab'])
 const hashFor = (view) => (view === 'lab' ? 'testingpage' : view)
 
+/* Analytics page paths. Routing is on the hash, so location.pathname is always
+   "/" — without these every view would collapse into one row in the report. */
+const PAGES = {
+  site: ['/', 'Home'],
+  docs: ['/docs', 'Components'],
+  templates: ['/templates', 'Templates'],
+  lab: ['/testingpage', 'Lab'],
+}
+
+const pageFor = (view) =>
+  PAGES[view] ?? [
+    `/testingpage/${view}`,
+    VIEWS.find((v) => v.id === view)?.label ?? view,
+  ]
+
 function App() {
   const [view, setView] = useState(
     () => ROUTES[window.location.hash.slice(1)] ?? 'site'
   )
+
+  useEffect(initAnalytics, [])
+
+  // Every view, not just the hash ones — the benches are navigation too.
+  useEffect(() => {
+    const [path, title] = pageFor(view)
+    trackPageView(path, title)
+  }, [view])
 
   /* Site pages own the hash so a refresh stays put; picking a bench inside the
      lab does not, so the hidden entry point survives a reload. */
