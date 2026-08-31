@@ -12,11 +12,11 @@ Author typeface — public/fonts/Author-*.otf
   resold, redistributed or renamed as a standalone product. See
   public/fonts/README.md.
 
-Demo photograph — src/demos/mist.webp
-  "Silhouette of mountains during daytime" by Ricardo Gomez Angel (@rgaleriacom),
-  published 10 April 2017. Obtained from Unsplash
-  (https://unsplash.com/photos/silhouette-of-mountains-during-daytime-dTSaC-S-7fs),
-  source id photo-1491824989090-cc2d0b57eb0d. Used under the Unsplash Licence:
-  free for commercial use, no permission or attribution required — this credit
-  is given because it is owed, not because the licence compels it. Resized to
-  3000px and re-encoded to WebP; not otherwise altered.
+Demo photograph — src/demos/typing.webp
+  A close-up of hands on a laptop keyboard, supplied by the repository owner
+  from a local download. The original filename
+  ("closeup-business-woman-hand-typing-laptop-keyboard_1232-2958.jpg.avif")
+  matches Freepik's asset-id convention, so the applicable terms are most
+  likely Freepik's rather than a public-domain or Unsplash grant. That has not
+  been confirmed. Converted from AVIF to WebP at its native 740x493; not
+  otherwise altered.
