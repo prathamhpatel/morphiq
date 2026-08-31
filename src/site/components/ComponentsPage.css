@@ -348,6 +348,9 @@
 /* ---------- code ---------- */
 
 .code {
+  /* how much of a long file shows before the reader asks for the rest */
+  --code-rows: 20;
+
   margin: calc(20 * var(--mq-s)) 0 calc(28 * var(--mq-s));
   border-radius: calc(8 * var(--mq-s));
   background: var(--mq-ink);
@@ -409,6 +412,46 @@
   font-size: calc(14 * var(--mq-s));
   line-height: calc(23 * var(--mq-s));
   white-space: pre;
+}
+
+/* --code-rows lines plus the body's own top padding — the clip lands on a
+   line boundary rather than through the middle of one. */
+.code.is-clipped .code__body {
+  max-height: calc((var(--code-rows) * 23 + 16) * var(--mq-s));
+  overflow-y: hidden;
+}
+
+.code__more {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: calc(11 * var(--mq-s)) calc(16 * var(--mq-s));
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--mq-bg) 20%, transparent);
+  background: none;
+  color: color-mix(in srgb, var(--mq-bg) 72%, transparent);
+  font-family: var(--mq-mono);
+  font-size: calc(13 * var(--mq-s));
+  line-height: 1;
+  text-align: left;
+  cursor: pointer;
+}
+.code__more:hover {
+  background: color-mix(in srgb, var(--mq-bg) 10%, transparent);
+  color: var(--mq-bg);
+}
+
+/* The fade sits on the button rather than the block, so it covers the clipped
+   last line and nothing else — the block itself is overflow: hidden. */
+.code.is-clipped .code__more::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: calc(72 * var(--mq-s));
+  background: linear-gradient(to top, var(--mq-ink), transparent);
+  pointer-events: none;
 }
 
 /* ---------- preview pane ---------- */
