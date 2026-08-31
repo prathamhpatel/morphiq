@@ -86,3 +86,10 @@
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.72);
 }
+
+/* The media is bundled, so it can't 404 — but if it ever fails to decode,
+   the frame still reads as a panel rather than a hole in the page. Scoped to
+   the demo so it can't override a consumer's own transparent media. */
+.sxd .scroll-expand__frame {
+  background: linear-gradient(160deg, #141a28, #07080b 62%);
+}

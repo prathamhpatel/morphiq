@@ -1,10 +1,9 @@
 import ScrollExpand from '../components/ScrollExpand/ScrollExpand.jsx'
+import photo from './dusk.webp'
 import './scroll-expand-demo.css'
 
 /* Demo host for ScrollExpand. The lab locks the page, so this
    provides its own scroller — the component finds it on its own. */
-
-const PHOTO = 'https://picsum.photos/seed/morphiq-expand/2400/1400'
 
 export default function ScrollExpandDemo(props = {}) {
   return (
@@ -16,7 +15,7 @@ export default function ScrollExpandDemo(props = {}) {
       </section>
 
       <ScrollExpand
-        media={<img src={PHOTO} alt="" />}
+        media={<img src={photo} alt="" decoding="async" />}
         width={props.width ?? 42}
         height={props.height ?? 58}
         radius={props.radius ?? 24}
