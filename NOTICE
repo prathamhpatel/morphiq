@@ -11,3 +11,12 @@ Author typeface — public/fonts/Author-*.otf
   including web embedding. Per the Fontshare licence these files may not be
   resold, redistributed or renamed as a standalone product. See
   public/fonts/README.md.
+
+Demo photograph — src/demos/mist.webp
+  "Silhouette of mountains during daytime" by Ricardo Gomez Angel (@rgaleriacom),
+  published 10 April 2017. Obtained from Unsplash
+  (https://unsplash.com/photos/silhouette-of-mountains-during-daytime-dTSaC-S-7fs),
+  source id photo-1491824989090-cc2d0b57eb0d. Used under the Unsplash Licence:
+  free for commercial use, no permission or attribution required — this credit
+  is given because it is owed, not because the licence compels it. Resized to
+  3000px and re-encoded to WebP; not otherwise altered.
