@@ -503,16 +503,6 @@
   color: var(--mq-soft);
 }
 
-/* Everything in the stage sits on top of the photograph, so it is lit by the
-   media rather than by the page and stays white in every palette. Setting the
-   theme's ink on .sxd above was reaching these too: on a light ground the
-   caption and the reveal heading came out dark navy over a near-black night
-   shot and disappeared. Only the sections either side of the panel follow the
-   theme — they are on the sheet, not on the media. */
-.docs__stage .scroll-expand__stage {
-  color: #fff;
-}
-
 /* The Scroll Expand host is written for a full page: viewport-tall sections
    either side of the panel and type sized in vw. Both are re-scaled to the
    preview box so the whole sequence reads at this size. */

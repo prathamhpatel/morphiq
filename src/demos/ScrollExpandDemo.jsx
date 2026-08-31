@@ -1,5 +1,5 @@
 import ScrollExpand from '../components/ScrollExpand/ScrollExpand.jsx'
-import photo from './trails.webp'
+import photo from './snow.webp'
 import './scroll-expand-demo.css'
 
 /* Demo host for ScrollExpand. The lab locks the page, so this
