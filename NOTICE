@@ -14,9 +14,7 @@ Author typeface — public/fonts/Author-*.otf
 
 Demo photograph — src/demos/typing.webp
   A close-up of hands on a laptop keyboard, supplied by the repository owner
-  from a local download. The original filename
-  ("closeup-business-woman-hand-typing-laptop-keyboard_1232-2958.jpg.avif")
-  matches Freepik's asset-id convention, so the applicable terms are most
-  likely Freepik's rather than a public-domain or Unsplash grant. That has not
-  been confirmed. Converted from AVIF to WebP at its native 740x493; not
-  otherwise altered.
+  from a local download ("large.jpg"). The filename carries no provenance and
+  the source has not been established, so the applicable terms are unknown —
+  worth confirming before relying on it. Re-encoded from JPEG to WebP at its
+  native 740x416; not otherwise altered.
