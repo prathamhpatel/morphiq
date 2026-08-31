@@ -1,21 +1,11 @@
 import ScrollExpand from '../components/ScrollExpand/ScrollExpand.jsx'
-import darkPlate from './trails.webp'
-import lightPlate from './snow.webp'
+import photo from './trails.webp'
 import './scroll-expand-demo.css'
 
 /* Demo host for ScrollExpand. The lab locks the page, so this
    provides its own scroller — the component finds it on its own. */
 
-/* Two plates, because one cannot work.
-   The slots over the media are the page's own ink, which runs from near-black
-   to near-white across the palettes — so a light photograph loses the caption
-   in dark mode and a dark one loses it in light. Moving the media with the
-   mode instead keeps the ink opposite it in both.
-   Defaults to the dark plate: the standalone bench draws its own dark sheet
-   whatever the site is set to. */
 export default function ScrollExpandDemo(props = {}) {
-  const photo = props.mode === 'light' ? lightPlate : darkPlate
-
   return (
     <div className="sxd">
       <section className="sxd__lead">
