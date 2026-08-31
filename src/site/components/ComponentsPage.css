@@ -504,22 +504,23 @@
 }
 
 /* One photograph, every palette.
-   The media is washed with the page's own ground, so the panel reads as a
-   duotone of whatever theme is running and the slots on top can stay
-   var(--mq-ink) like the rest of the page. What makes that safe is that the
-   contrast then falls back to the site's own ink-on-ground ratio, which is
-   already calibrated. At 0.6 seventeen of the twenty renderings clear the
-   3.0 AA wants for large text; the three that do not are light modes on the
-   near-white grounds — #0051c8 at 2.66, #8f3a3a at 2.82, #2818ef at 2.99 —
-   and 0.7 would clear all twenty at 3.5, if the photo can stand being that
-   muted. */
-.docs__stage .scroll-expand__frame::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--mq-bg);
-  opacity: 0.6;
-  pointer-events: none;
+   The slots keep var(--mq-ink) like the rest of the page. What makes that
+   safe on a photograph is the halo: the glyphs carry a short glow of the
+   page's own ground, so whatever the media happens to be underneath, the ink
+   is always read against --mq-bg — the site's own calibrated pair.
+   No single photograph can do this on its own. The ink runs from near-black
+   on the light modes to near-white on the dark ones, so the media would have
+   to be light and dark at once; measured across eleven candidates the best
+   worst-case was 1.87:1 against the 3.0 AA wants for large text. */
+.docs__stage .scroll-expand__stage :is(.sxd__caption, .sxd__reveal h3) {
+  text-shadow:
+    0 0 2px var(--mq-bg),
+    0 0 10px var(--mq-bg),
+    0 0 22px var(--mq-bg);
+}
+
+.docs__stage .scroll-expand__stage :is(.sxd__hint, .sxd__reveal p) {
+  text-shadow: 0 0 8px var(--mq-bg), 0 0 16px var(--mq-bg);
 }
 
 /* These set their own white for the bench, whose sheet is always dark. On the
